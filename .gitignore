@@ -1,0 +1,4 @@
+config_*.xml
+logs/*.log
+vendor
+.idea

@@ -1,0 +1,50 @@
+
+.paylands-container {
+	position: relative;
+}
+.paylands-container .loader {
+	position: absolute;
+	width: 100%;
+	background: #ffffff94;
+	text-align: center;
+	display: none;
+	z-index: 99;
+	height: 100%;
+}
+.paylands-container .loader img {
+	width: 200px;
+}
+.paylands-cards-messages,
+.paylands-messages {
+	display: none;
+	color: red;
+}
+
+p.paylands-messages {
+	padding: 0px 15px 10px;
+}
+
+.paylands-container .card {
+	padding: 5px 10px;
+	box-shadow: none;
+}
+
+.paylands-container .card .card-number {
+	color: #232323;
+}
+
+.paylands-container .card p {
+	margin-bottom: 0px;
+}
+
+.paylands-container .custom-form  {
+	margin-top: 20px;
+	display: none;
+}
+
+p.paylands-error {
+	background-color: #fae5e5;
+	color: #e02b27;
+	width: 100%;
+	padding: 10px 10px;
+}

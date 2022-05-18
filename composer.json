@@ -1,0 +1,21 @@
+{
+  "name": "prestashop/paylands",
+  "description": "PrestaShop module Paylands",
+  "homepage": "http://paylands.com",
+  "license": "MIT",
+  "authors": [
+    {
+      "name": "paylands",
+      "email": "support@paylands.com"
+    }
+  ],
+  "require": {
+    "php": ">=5.4",
+    "katzgrau/klogger": "dev-master"
+  },
+  "config": {
+    "preferred-install": "dist",
+    "prepend-autoloader": false
+  },
+  "type": "prestashop-module"
+}

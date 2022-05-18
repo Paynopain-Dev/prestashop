@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<module>
+	<name>paylands</name>
+	<displayName><![CDATA[Paylands payment]]></displayName>
+	<version><![CDATA[2.0.0]]></version>
+	<description><![CDATA[Payment Gateway por https://paynopain.com]]></description>
+	<author><![CDATA[Paylands]]></author>
+	<tab><![CDATA[payments_gateways]]></tab>
+	<confirmUninstall>Esta seguro que quiere eliminar esta Pasarela de Pago?</confirmUninstall>
+	<is_configurable>1</is_configurable>
+	<need_instance>1</need_instance>
+	<limited_countries></limited_countries>
+</module>
