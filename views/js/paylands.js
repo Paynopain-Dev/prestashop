@@ -47,6 +47,14 @@ var paylandsModel = {
 				$("#payment-confirmation button").removeAttr("disabled");
 			}
 		});
+	},
+
+	initForm: function(){
+		$(".paylands-messages").hide();
+		window.paylands.setTemplate(paylandConfig.template);
+		window.paylands.setMode(paylandConfig.mode);
+		window.paylands.initializate(paylandConfig.token, "paylands-frame");
+
 	}
 }
 $(document).ready(function (){
@@ -72,15 +80,18 @@ $(document).ready(function (){
 	/**
 	 * Load paylands form
 	 */
-	$(document).on("click",'input[name="payment-option"]', function() {
-		let input = $(this);
-		if(input.data("module-name") === "paylands") {
-			$(".paylands-messages").hide();
-			window.paylands.setTemplate(paylandConfig.template);
-			window.paylands.setMode(paylandConfig.mode);
-			window.paylands.initializate(paylandConfig.token,"paylands-frame");
+	if ($('input[name="payment-option"]').is(':checked') ){
+		if($('input[name="module-name"]') === "paylands") {
+			paylandsModel.initForm();
 		}
-	});
+	}else {
+		$(document).on("click",'input[name="payment-option"]', function() {
+			let input = $(this);
+			if(input.data("module-name") === "paylands") {
+				paylandsModel.initForm();
+			}
+		});
+	}
 
 	/**
 	 * Handle action when the customer place order
