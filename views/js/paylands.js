@@ -80,15 +80,13 @@ $(document).ready(function (){
 	/**
 	 * Load paylands form
 	 */
-	if ($('input[name="payment-option"]').is(':checked') ){
-		if($('input[name="module-name"]') === "paylands") {
-			paylandsModel.initForm();
-		}
+	if($('input[name="payment-option"]:checked').data("module-name") === 'paylands'){
+		setTimeout(paylandsModel.initForm, 3000);
 	} else {
 		$(document).on("click",'input[name="payment-option"]', function() {
 			let input = $(this);
 			if(input.data("module-name") === "paylands") {
-				paylandsModel.initForm();
+				setTimeout(paylandsModel.initForm, 3000);
 			}
 		});
 	}
