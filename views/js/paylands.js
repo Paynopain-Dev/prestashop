@@ -84,7 +84,7 @@ $(document).ready(function (){
 		if($('input[name="module-name"]') === "paylands") {
 			paylandsModel.initForm();
 		}
-	}else {
+	} else {
 		$(document).on("click",'input[name="payment-option"]', function() {
 			let input = $(this);
 			if(input.data("module-name") === "paylands") {
