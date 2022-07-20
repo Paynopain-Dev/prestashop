@@ -5,10 +5,10 @@ if (!defined('_PS_VERSION_')) {
 	exit;
 }
 
-include_once(_PS_MODULE_DIR_ . 'paylands/vendor/autoload.php');
-include_once(_PS_MODULE_DIR_ . 'paylands/libs/PaymentOrder.php');
-include_once(_PS_MODULE_DIR_ . 'paylands/libs/Logger.php');
-include_once(_PS_MODULE_DIR_ . 'paylands/classes/paylands.php');
+include_once(_PS_MODULE_DIR_ . basename(dirname(__FILE__)) . '/vendor/autoload.php');
+include_once(_PS_MODULE_DIR_ . basename(dirname(__FILE__)) . '/libs/PaymentOrder.php');
+include_once(_PS_MODULE_DIR_ . basename(dirname(__FILE__)) . '/libs/Logger.php');
+include_once(_PS_MODULE_DIR_ . basename(dirname(__FILE__)) . '/classes/paylands.php');
 
 class Paylands extends \PaymentModule
 {
@@ -131,7 +131,7 @@ class Paylands extends \PaymentModule
 			$order_state->invoice = false;
 			$order_state->module_name = $this->name;
 			if ($order_state->add()) {
-				$source = _PS_MODULE_DIR_ . 'paylands/views/img/paylands_logo_mini.gif';
+				$source = _PS_MODULE_DIR_ . basename(dirname(__FILE__)) .'/views/img/paylands_logo_mini.gif';
 				$destination = _PS_ROOT_DIR_ . '/img/os/' . (int)$order_state->id . '.gif';
 				copy($source, $destination);
 			}
@@ -342,7 +342,7 @@ class Paylands extends \PaymentModule
 		]);
 		$newOption->setModuleName($this->name)
 			->setCallToActionText($this->l('Pay with Card Safely'))
-			->setAdditionalInformation($this->fetch('module:paylands/views/templates/hook/paylandsjs.tpl'))
+			->setAdditionalInformation($this->fetch('module:'. basename(dirname(__FILE__)) .'/views/templates/hook/paylandsjs.tpl'))
 			->setAction($this->context->link->getModuleLink($this->name, 'validation', array(), true));
 
 		return array($newOption);
