@@ -145,7 +145,7 @@ class PaylandsConector
 			'additional' => 'usuario',
 			'customer_ext_id' => $customerId,
 			'service' => $this->getConfigValue('PNP_SERVICE'),
-			"url_post" => 'prestashop-solve_form_bug/' . basename(dirname(__FILE__)) . '/controllers/update.php',
+			"url_post" => 'prestashop/' . basename(dirname(__FILE__)) . '/controllers/update.php',
 			"template_uuid" => $this->getConfigValue('PNP_SERVICE'),
 			"dcc_template_uuid" => "ea0d5f53-5901-4c6b-9d4a-7e7c9b0eeb7e",
 			"description" => "Order No. " . $order->id,
@@ -154,6 +154,7 @@ class PaylandsConector
 		if (!is_null($source_id)) {
 			$data['source_uuid'] = $source_id;
 		}
+
 		return $data;
 	}
 
