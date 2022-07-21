@@ -1,6 +1,6 @@
 <?php
 
-include_once(_PS_MODULE_DIR_ . 'paylands/classes/paylands.php');
+include_once(_PS_MODULE_DIR_ . basename(dirname(__FILE__)) .'/classes/paylands.php');
 
 class paylandsUpdateModuleFrontController extends ModuleFrontController
 {

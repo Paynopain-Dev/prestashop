@@ -30,7 +30,7 @@ class Logger {
     public static function log($message)
     {
         if (empty(self::$logger)) {
-            self::$logger = new \Katzgrau\KLogger\Logger(_PS_MODULE_DIR_.'paylands/logs', Psr\Log\LogLevel::INFO, ["extension" => 'log']);
+            self::$logger = new \Katzgrau\KLogger\Logger(_PS_MODULE_DIR_. basename(dirname(__FILE__)) .'/logs', Psr\Log\LogLevel::INFO, ["extension" => 'log']);
         }
         self::$logger->info($message);
     }
@@ -38,7 +38,7 @@ class Logger {
     public static function error($message)
     {
         if (empty(self::$logger)) {
-            self::$logger = new \Katzgrau\KLogger\Logger(_PS_MODULE_DIR_.'paylands/logs', Psr\Log\LogLevel::ERROR, ["extension" => 'log']);
+            self::$logger = new \Katzgrau\KLogger\Logger(_PS_MODULE_DIR_. basename(dirname(__FILE__)) .'/logs', Psr\Log\LogLevel::ERROR, ["extension" => 'log']);
         }
         self::$logger->error($message);
     }

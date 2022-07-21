@@ -385,7 +385,7 @@ class Paylands extends \PaymentModule
 			'form' => array(
 				'legend' => array(
 					'title' => $this->l('Paylands Configuration'),
-					'image' => '../modules/paylands/views/img/paylands-logo.png'
+					'image' => '../modules/' . basename(dirname(__FILE__)) . '/views/img/paylands-logo.png'
 				),
 				'input' => array(
 					array(
