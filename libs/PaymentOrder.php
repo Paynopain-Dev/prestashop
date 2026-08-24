@@ -27,6 +27,8 @@
 namespace PaylandsSDK\Services;
 
 
+use Customer;
+
 class PaymentOrder
 {
 
@@ -134,6 +136,7 @@ class PaymentOrder
      */
     public function createOrder($amount, $operative, $customer_ext_id, $description, $additional, $secure, $url_post, $url_ok, $url_ko, $source_uuid)
     {
+        $customer = new Customer($customer_ext_id);
         $amount_in_cents = $this->toCents($amount);
         $payload = array(
             "amount" => $amount_in_cents,
@@ -147,6 +150,13 @@ class PaymentOrder
             "url_post" => $url_post,
             "url_ok" => $url_ok,
             "url_ko" => $url_ko,
+            "extra_data" => [
+                "profile" => [
+                    "first_name" => $customer->firstname,
+                    "last_name" => $customer->lastname,
+                    "email" => $customer->email
+                ]
+            ]
         );
 
         if (!empty($source_uuid)) {
