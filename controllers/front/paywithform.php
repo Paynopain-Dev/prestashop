@@ -50,10 +50,7 @@ class paylandsPaywithformModuleFrontController extends ModuleFrontController
         $env = (int)Configuration::get('PNP_ENVIRONMENT');
         $environment = !empty($env) ? 'sandbox' : 'prod';
 
-        $lang = Configuration::get('PNP_FORM_LANG');
-        if ($lang == 'store') {
-            $lang = $this->context->language->iso_code;
-        }
+        $lang = $this->module->getFormLanguage();
 
         $total = $cart->getOrderTotal(true, Cart::BOTH);
         $pnpOrder = new PaymentOrder(Configuration::get('PNP_KEY'), Configuration::get('PNP_SIGNATURE'), Configuration::get('PNP_SERVICE'), $environment);
@@ -96,7 +93,8 @@ class paylandsPaywithformModuleFrontController extends ModuleFrontController
             }
             $this->module->createPaylandsOrder($order, $cart->id, $order_id);
         } else {
-            $this->module->validateOrder((int)$cart->id, Configuration::get('PS_OS_ERROR'), $total, $this->module->name, null, array(), (int)$cart->id_currency, false, $customer->secure_key);
+            // The payment never started, so no order is created: the cart is left
+            // untouched and the customer can retry without piling up failed orders.
             \Logger::error("cartId:" . $cart->id . "#PaylandsOrder:" . json_encode($order, JSON_PRETTY_PRINT));
         }
 

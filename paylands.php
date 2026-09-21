@@ -382,6 +382,53 @@ class Paylands extends \PaymentModule
         return $ip;
     }
 
+    /**
+     * Verify the validation_hash carried by a Paylands notification.
+     *
+     * The hash is the sha256 of the JSON encoded {order, client, extra_data} block
+     * concatenated with the service signature. extra_data is only part of the signed
+     * block when the notification actually carries it.
+     *
+     * @see https://docs.paylands.com/en/docs/notification-validation/
+     *
+     * @param string $raw_body raw request body exactly as received from Paylands
+     * @return bool
+     */
+    public function verifyNotification($raw_body)
+    {
+        $signature = Configuration::get('PNP_SIGNATURE');
+        if (empty($signature)) {
+            \Logger::error('PNP_NOTIFICATION#REJECTED:no signature configured');
+            return false;
+        }
+
+        $payload = json_decode($raw_body);
+        if (!is_object($payload) || empty($payload->validation_hash)) {
+            \Logger::error('PNP_NOTIFICATION#REJECTED:missing validation_hash');
+            return false;
+        }
+
+        $signed = array(
+            'order' => isset($payload->order) ? $payload->order : null,
+            'client' => isset($payload->client) ? $payload->client : null,
+        );
+        if (property_exists($payload, 'extra_data')) {
+            $signed['extra_data'] = $payload->extra_data;
+        }
+
+        $expected = hash(
+            'sha256',
+            json_encode($signed, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES) . $signature
+        );
+
+        if (!hash_equals($expected, (string)$payload->validation_hash)) {
+            \Logger::error('PNP_NOTIFICATION#REJECTED:validation_hash mismatch');
+            return false;
+        }
+
+        return true;
+    }
+
     public function createPaylandsOrder($order, $id_cart, $id_order = null)
     {
         $now = date("Y-m-d H:i:s");
@@ -475,7 +522,8 @@ class Paylands extends \PaymentModule
                 array('value' => 'store', 'label' => $this->l('Store language')),
                 array('value' => 'en',    'label' => $this->l('English')),
                 array('value' => 'es',    'label' => $this->l('Spanish')),
-                array('value' => 'de',    'label' => $this->l('Dutch')),
+                array('value' => 'ca',    'label' => $this->l('Catalan')),
+                array('value' => 'de',    'label' => $this->l('German')),
                 array('value' => 'pt',    'label' => $this->l('Portuguese')),
                 array('value' => 'fr',    'label' => $this->l('French')),
             ),
@@ -620,6 +668,21 @@ class Paylands extends \PaymentModule
         return false;
     }
 
+    /**
+     * ISO code the hosted payment form should be rendered in.
+     *
+     * @return string
+     */
+    public function getFormLanguage()
+    {
+        $lang = Configuration::get('PNP_FORM_LANG');
+        if (empty($lang) || $lang == 'store') {
+            $lang = Context::getContext()->language->iso_code;
+        }
+
+        return $lang;
+    }
+
     public function getCheckoutExtraData()
     {
         if (!(int)Configuration::get('PNP_MODE')) {
@@ -659,7 +722,7 @@ class Paylands extends \PaymentModule
             $checkout['default_payment_method'] = $default;
         }
 
-        $customization = array();
+        $customization = array('language' => $this->getFormLanguage());
         $theme = Configuration::get('PNP_CHECKOUT_THEME');
         if (!empty($theme)) {
             $customization['theme_type'] = $theme;

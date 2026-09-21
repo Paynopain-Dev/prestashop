@@ -69,10 +69,7 @@ class paylandsPaymentModuleFrontController extends ModuleFrontController
         $secure_payment = (int)Configuration::get('PNP_SECURE');
         $save_cards = Configuration::get('PNP_SAVE_CARD');
 
-        $lang = Configuration::get('PNP_FORM_LANG');
-        if ($lang == 'store') {
-            $lang = $this->context->language->iso_code;
-        }
+        $lang = $this->module->getFormLanguage();
 
         $customer_cards = array();
         if (!$isBizum && empty($customer->is_guest)) {
@@ -122,9 +119,10 @@ class paylandsPaymentModuleFrontController extends ModuleFrontController
             );
 
             if (empty($order) || $order['code'] != 200) {
-                $this->module->validateOrder((int)$cart->id, Configuration::get('PS_OS_ERROR'), $total, $this->module->name, null, array(), (int)$cart->id_currency, false, $customer->secure_key);
+                // The payment never started, so no order is created: the cart is left
+                // untouched and the customer can retry without piling up failed orders.
                 \Logger::error("cartId:" .$cart->id. "#PaylandsOrder:" . json_encode($order, JSON_PRETTY_PRINT));
-                return Tools::redirect(Context::getContext()->link->getModuleLink('paylands', 'ko', array('id' => $cart->id), true));
+                return Tools::redirect(Context::getContext()->link->getModuleLink('paylands', 'landingko', array('id' => $cart->id), true));
             }
 
             \Logger::log("cartId:" .$cart->id. "#PaylandsOrder:" . json_encode($order, JSON_PRETTY_PRINT));

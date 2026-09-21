@@ -53,3 +53,6 @@ $_MODULE['<{paylands}prestashop>infos_4bcc778f5d8496b7f63dadcdb6f60408'] = 'If t
 $_MODULE['<{paylands}prestashop>infos_916dad4ece2abac64fb1c05c4146c8c1'] = 'Please configure settings according your Paylands Account.';
 $_MODULE['<{paylands}prestashop>payment_e34d3f7326515b56add3aecdb9998900'] = 'Pay with Card Safely	';
 $_MODULE['<{paylands}prestashop>validation_e2b7dec8fa4b498156dfee6e4c84b156'] = ' This payment method is not available.';
+$_MODULE['<{paylands}prestashop>paylands_86bc3115eb4e9873ac96904a4a68e19e'] = 'German';
+$_MODULE['<{paylands}prestashop>paylands_900a14b115614d9d4d1c47f1d3a3251b'] = 'Catalan';
+$_MODULE['<{paylands}prestashop>ko_9ee0968b024b08761a848b6f4d36b238'] = 'We apologize the transaction was not success, please contact to store\'s administrator to get more details';
