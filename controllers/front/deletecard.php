@@ -36,7 +36,7 @@ class paylandsDeletecardModuleFrontController extends ModuleFrontController
 
     public function postProcess()
     {
-        $deleted = Db::getInstance()->delete('pnp_paylands_cards', '`card_uuid` = ' . (int)Tools::getValue('card_uuid'));
+        $deleted = Db::getInstance()->delete('pnp_paylands_cards', '`card_uuid` = "' . pSQL(Tools::getValue('card_uuid')) . '"');
         $result = array();
         $result['success'] = true;
 

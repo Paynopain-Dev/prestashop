@@ -74,7 +74,9 @@ class paylandsPaywithcardModuleFrontController extends ModuleFrontController
             Context::getContext()->link->getModuleLink('paylands', 'paymentcallback', array('id' => $cart->id), true),
             Context::getContext()->link->getModuleLink('paylands', 'landingok', array('id' => $cart->id), true),
             Context::getContext()->link->getModuleLink('paylands', 'landingko', array('id' => $cart->id), true),
-            $card_source_id
+            $card_source_id,
+            array(),
+            $cart
         );
 
         $url_redirect = Context::getContext()->link->getModuleLink('paylands', 'landingko', array('id' => $cart->id), true);
@@ -93,12 +95,10 @@ class paylandsPaywithcardModuleFrontController extends ModuleFrontController
                 'date_transaction' => date("Y-m-d H:i:s")
             );
 
-            $order_ps = '';
             if (_PS_VERSION_ >= 1.7) {
                 $order_ps = Order::getByCartId($cart->id);
             } else {
-                $order_id = Order::getOrderByCartId($cart->id);
-                $order_ps = new Order($order_id);
+                $order_ps = new Order(Order::getOrderByCartId($cart->id));
             }
             $this->module->validateOrder((int)$cart->id, Configuration::get('PNP_ORDER_WAITING_STATE'), $total, $this->module->name, null, $order_details, (int)$cart->id_currency, false, $customer->secure_key);
             $this->module->createPaylandsOrder($order, $cart->id, $order_ps->id);

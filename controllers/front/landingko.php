@@ -60,7 +60,6 @@ class paylandsLandingkoModuleFrontController extends ModuleFrontController
         }
 
         if ($success) {
-            $order_id = 0;
             if (_PS_VERSION_ >= 1.7) {
                 $order_id = (int)Order::getIdByCartId((int)$cart->id);
             } else {

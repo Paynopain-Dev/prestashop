@@ -36,19 +36,17 @@ class paylandsPaymentcallbackModuleFrontController extends ModuleFrontController
         if (!$this->module->checkCurrency($cart)) {
             die('ko');
         }
-        $data = json_decode(Tools::file_get_contents('php://input'), true);
+        $data = json_decode(file_get_contents('php://input'), true);
 
         \Logger::log("PNP_CALLBACK#CartId:" . $cart->id . "#paylandsCallbackData:" . json_encode($data, JSON_PRETTY_PRINT));
 
         if (!empty($data)) {
             $customer = new Customer($cart->id_customer);
 
-            $order_ps = '';
             if (_PS_VERSION_ >= 1.7) {
                 $order_ps = Order::getByCartId($cart->id);
             } else {
-                $order_id = Order::getOrderByCartId($cart->id);
-                $order_ps = new Order($order_id);
+                $order_ps = new Order(Order::getOrderByCartId($cart->id));
             }
 
             if ($data['order']['status'] == 'SUCCESS') {

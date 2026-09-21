@@ -43,7 +43,7 @@ class Paylands extends \PaymentModule
     {
         $this->name = 'paylands';
         $this->tab = 'payments_gateways';
-        $this->version = '2.0.0';
+        $this->version = '3.0.0';
         $this->author = 'Paylands';
 //        $this->controllers = array('payment', 'validation');
 
@@ -92,7 +92,46 @@ class Paylands extends \PaymentModule
             && Configuration::updateValue('PNP_ORDER_SUCCESS_STATE', '2') // Payment Accepted
             && Configuration::updateValue('PNP_LOGO', $this->getModuleUrl() . '/views/img/paylands-logo-dark.png') // Media::getMediaPath(_PS_MODULE_DIR_.$this->name.'/paylands-logo-dark.png')) // Context::getContext()->shop->getBaseURL(true))
             && Configuration::updateValue('PNP_FACE_COLOR', "#ef0643")
-            && Configuration::updateValue('PNP_FORM_LANG', '');
+            && Configuration::updateValue('PNP_FORM_LANG', '')
+            && Configuration::updateValue('PNP_SERVICE_NAME', 'Pay with Card Safely')
+            && Configuration::updateValue('PNP_BIZUM_ENABLED', 0)
+            && Configuration::updateValue('PNP_BIZUM_SERVICE', '')
+            && Configuration::updateValue('PNP_BIZUM_NAME', 'Pay with Bizum')
+            && Configuration::updateValue('PNP_MODE', 0)
+            && Configuration::updateValue('PNP_CHECKOUT_UUID', '')
+            && Configuration::updateValue('PNP_CHECKOUT_NAME', 'Pay Securely')
+            && Configuration::updateValue('PNP_CHECKOUT_METHODS_CARD', 1)
+            && Configuration::updateValue('PNP_CHECKOUT_METHODS_BIZUM', 0)
+            && Configuration::updateValue('PNP_CHECKOUT_METHODS_SOFORT', 0)
+            && Configuration::updateValue('PNP_CHECKOUT_METHODS_IDEAL', 0)
+            && Configuration::updateValue('PNP_CHECKOUT_METHODS_CRYPTO', 0)
+            && Configuration::updateValue('PNP_CHECKOUT_METHODS_PIX', 0)
+            && Configuration::updateValue('PNP_CHECKOUT_METHODS_VIACASH', 0)
+            && Configuration::updateValue('PNP_CHECKOUT_METHODS_KLARNA', 0)
+            && Configuration::updateValue('PNP_CHECKOUT_METHODS_GIROPAY', 0)
+            && Configuration::updateValue('PNP_CHECKOUT_METHODS_GPAY', 0)
+            && Configuration::updateValue('PNP_CHECKOUT_METHODS_APAY', 0)
+            && Configuration::updateValue('PNP_CHECKOUT_METHODS_C2PAY', 0)
+            && Configuration::updateValue('PNP_CHECKOUT_DEFAULT_METHOD', 'PAYMENT_CARD')
+            && Configuration::updateValue('PNP_CHECKOUT_THEME', 'LIGHT')
+            && Configuration::updateValue('PNP_CHECKOUT_FONT', '')
+            && Configuration::updateValue('PNP_CHECKOUT_DESCRIPTION', '')
+            && Configuration::updateValue('PNP_KEY_PROD', '')
+            && Configuration::updateValue('PNP_KEY_SANDBOX', '')
+            && Configuration::updateValue('PNP_SIGNATURE_PROD', '')
+            && Configuration::updateValue('PNP_SIGNATURE_SANDBOX', '')
+            && Configuration::updateValue('PNP_SERVICE_PROD', '')
+            && Configuration::updateValue('PNP_SERVICE_SANDBOX', '')
+            && Configuration::updateValue('PNP_SERVICE_NAME_PROD', 'Pay with Card Safely')
+            && Configuration::updateValue('PNP_SERVICE_NAME_SANDBOX', 'Pay with Card Safely')
+            && Configuration::updateValue('PNP_BIZUM_SERVICE_PROD', '')
+            && Configuration::updateValue('PNP_BIZUM_SERVICE_SANDBOX', '')
+            && Configuration::updateValue('PNP_BIZUM_NAME_PROD', 'Pay with Bizum')
+            && Configuration::updateValue('PNP_BIZUM_NAME_SANDBOX', 'Pay with Bizum')
+            && Configuration::updateValue('PNP_CHECKOUT_UUID_PROD', '')
+            && Configuration::updateValue('PNP_CHECKOUT_UUID_SANDBOX', '')
+            && Configuration::updateValue('PNP_CHECKOUT_NAME_PROD', 'Pay Securely')
+            && Configuration::updateValue('PNP_CHECKOUT_NAME_SANDBOX', 'Pay Securely');
     }
 
     public function uninstall()
@@ -109,7 +148,46 @@ class Paylands extends \PaymentModule
             && Configuration::deleteByName('PNP_ORDER_SUCCESS_STATE')
             && Configuration::deleteByName('PNP_LOGO')
             && Configuration::deleteByName('PNP_FACE_COLOR')
-            && Configuration::deleteByName('PNP_FORM_LANG');
+            && Configuration::deleteByName('PNP_FORM_LANG')
+            && Configuration::deleteByName('PNP_SERVICE_NAME')
+            && Configuration::deleteByName('PNP_BIZUM_ENABLED')
+            && Configuration::deleteByName('PNP_BIZUM_SERVICE')
+            && Configuration::deleteByName('PNP_BIZUM_NAME')
+            && Configuration::deleteByName('PNP_MODE')
+            && Configuration::deleteByName('PNP_CHECKOUT_UUID')
+            && Configuration::deleteByName('PNP_CHECKOUT_NAME')
+            && Configuration::deleteByName('PNP_CHECKOUT_METHODS_CARD')
+            && Configuration::deleteByName('PNP_CHECKOUT_METHODS_BIZUM')
+            && Configuration::deleteByName('PNP_CHECKOUT_METHODS_SOFORT')
+            && Configuration::deleteByName('PNP_CHECKOUT_METHODS_IDEAL')
+            && Configuration::deleteByName('PNP_CHECKOUT_METHODS_CRYPTO')
+            && Configuration::deleteByName('PNP_CHECKOUT_METHODS_PIX')
+            && Configuration::deleteByName('PNP_CHECKOUT_METHODS_VIACASH')
+            && Configuration::deleteByName('PNP_CHECKOUT_METHODS_KLARNA')
+            && Configuration::deleteByName('PNP_CHECKOUT_METHODS_GIROPAY')
+            && Configuration::deleteByName('PNP_CHECKOUT_METHODS_GPAY')
+            && Configuration::deleteByName('PNP_CHECKOUT_METHODS_APAY')
+            && Configuration::deleteByName('PNP_CHECKOUT_METHODS_C2PAY')
+            && Configuration::deleteByName('PNP_CHECKOUT_DEFAULT_METHOD')
+            && Configuration::deleteByName('PNP_CHECKOUT_THEME')
+            && Configuration::deleteByName('PNP_CHECKOUT_FONT')
+            && Configuration::deleteByName('PNP_CHECKOUT_DESCRIPTION')
+            && Configuration::deleteByName('PNP_KEY_PROD')
+            && Configuration::deleteByName('PNP_KEY_SANDBOX')
+            && Configuration::deleteByName('PNP_SIGNATURE_PROD')
+            && Configuration::deleteByName('PNP_SIGNATURE_SANDBOX')
+            && Configuration::deleteByName('PNP_SERVICE_PROD')
+            && Configuration::deleteByName('PNP_SERVICE_SANDBOX')
+            && Configuration::deleteByName('PNP_SERVICE_NAME_PROD')
+            && Configuration::deleteByName('PNP_SERVICE_NAME_SANDBOX')
+            && Configuration::deleteByName('PNP_BIZUM_SERVICE_PROD')
+            && Configuration::deleteByName('PNP_BIZUM_SERVICE_SANDBOX')
+            && Configuration::deleteByName('PNP_BIZUM_NAME_PROD')
+            && Configuration::deleteByName('PNP_BIZUM_NAME_SANDBOX')
+            && Configuration::deleteByName('PNP_CHECKOUT_UUID_PROD')
+            && Configuration::deleteByName('PNP_CHECKOUT_UUID_SANDBOX')
+            && Configuration::deleteByName('PNP_CHECKOUT_NAME_PROD')
+            && Configuration::deleteByName('PNP_CHECKOUT_NAME_SANDBOX');
     }
 
     private function installTables()
@@ -217,9 +295,10 @@ class Paylands extends \PaymentModule
     private function _postValidation()
     {
         if (Tools::isSubmit('btnSubmit')) {
-            if (!Tools::getValue('PNP_SERVICE')) {
+            $envSuffix = (int)Tools::getValue('PNP_ENVIRONMENT') ? '_SANDBOX' : '_PROD';
+            if (!Tools::getValue('PNP_SERVICE' . $envSuffix)) {
                 $this->_postErrors[] = $this->l('The "Service" field is required.');
-            } elseif (!Tools::getValue('PNP_SIGNATURE')) {
+            } elseif (!Tools::getValue('PNP_SIGNATURE' . $envSuffix)) {
                 $this->_postErrors[] = $this->l('The "Signature" field is required.');
             }
         }
@@ -229,9 +308,6 @@ class Paylands extends \PaymentModule
     {
         if (Tools::isSubmit('btnSubmit')) {
             Configuration::updateValue('PNP_ENVIRONMENT', Tools::getValue('PNP_ENVIRONMENT'));
-            Configuration::updateValue('PNP_SERVICE', Tools::getValue('PNP_SERVICE'));
-            Configuration::updateValue('PNP_SIGNATURE', Tools::getValue('PNP_SIGNATURE'));
-            Configuration::updateValue('PNP_KEY', Tools::getValue('PNP_KEY'));
             Configuration::updateValue('PNP_SECURE', Tools::getValue('PNP_SECURE'));
             Configuration::updateValue('PNP_SAVE_CARD', Tools::getValue('PNP_SAVE_CARD'));
             Configuration::updateValue('PNP_ORDER_WAITING_STATE', Tools::getValue('PNP_ORDER_WAITING_STATE'));
@@ -239,13 +315,53 @@ class Paylands extends \PaymentModule
             Configuration::updateValue('PNP_LOGO', Tools::getValue('PNP_LOGO'));
             Configuration::updateValue('PNP_FACE_COLOR', Tools::getValue('PNP_FACE_COLOR'));
             Configuration::updateValue('PNP_FORM_LANG', Tools::getValue('PNP_FORM_LANG'));
+            Configuration::updateValue('PNP_BIZUM_ENABLED', Tools::getValue('PNP_BIZUM_ENABLED') ? 1 : 0);
+            Configuration::updateValue('PNP_MODE', (int)Tools::getValue('PNP_MODE'));
+            // Per-environment credentials
+            Configuration::updateValue('PNP_KEY_PROD',            Tools::getValue('PNP_KEY_PROD'));
+            Configuration::updateValue('PNP_KEY_SANDBOX',         Tools::getValue('PNP_KEY_SANDBOX'));
+            Configuration::updateValue('PNP_SIGNATURE_PROD',      Tools::getValue('PNP_SIGNATURE_PROD'));
+            Configuration::updateValue('PNP_SIGNATURE_SANDBOX',   Tools::getValue('PNP_SIGNATURE_SANDBOX'));
+            Configuration::updateValue('PNP_SERVICE_PROD',        Tools::getValue('PNP_SERVICE_PROD'));
+            Configuration::updateValue('PNP_SERVICE_SANDBOX',     Tools::getValue('PNP_SERVICE_SANDBOX'));
+            Configuration::updateValue('PNP_SERVICE_NAME_PROD',   Tools::getValue('PNP_SERVICE_NAME_PROD'));
+            Configuration::updateValue('PNP_SERVICE_NAME_SANDBOX',Tools::getValue('PNP_SERVICE_NAME_SANDBOX'));
+            Configuration::updateValue('PNP_BIZUM_SERVICE_PROD',   Tools::getValue('PNP_BIZUM_SERVICE_PROD'));
+            Configuration::updateValue('PNP_BIZUM_SERVICE_SANDBOX',Tools::getValue('PNP_BIZUM_SERVICE_SANDBOX'));
+            Configuration::updateValue('PNP_BIZUM_NAME_PROD',     Tools::getValue('PNP_BIZUM_NAME_PROD'));
+            Configuration::updateValue('PNP_BIZUM_NAME_SANDBOX',  Tools::getValue('PNP_BIZUM_NAME_SANDBOX'));
+            Configuration::updateValue('PNP_CHECKOUT_UUID_PROD',  Tools::getValue('PNP_CHECKOUT_UUID_PROD'));
+            Configuration::updateValue('PNP_CHECKOUT_UUID_SANDBOX',Tools::getValue('PNP_CHECKOUT_UUID_SANDBOX'));
+            Configuration::updateValue('PNP_CHECKOUT_NAME_PROD',  Tools::getValue('PNP_CHECKOUT_NAME_PROD'));
+            Configuration::updateValue('PNP_CHECKOUT_NAME_SANDBOX',Tools::getValue('PNP_CHECKOUT_NAME_SANDBOX'));
+            // Copy active environment's credentials to the base keys used by runtime code
+            $envSuffix = (int)Tools::getValue('PNP_ENVIRONMENT') ? '_SANDBOX' : '_PROD';
+            Configuration::updateValue('PNP_KEY',          Tools::getValue('PNP_KEY'          . $envSuffix));
+            Configuration::updateValue('PNP_SIGNATURE',    Tools::getValue('PNP_SIGNATURE'    . $envSuffix));
+            Configuration::updateValue('PNP_SERVICE',      Tools::getValue('PNP_SERVICE'      . $envSuffix));
+            Configuration::updateValue('PNP_SERVICE_NAME', Tools::getValue('PNP_SERVICE_NAME' . $envSuffix));
+            Configuration::updateValue('PNP_BIZUM_SERVICE',Tools::getValue('PNP_BIZUM_SERVICE'. $envSuffix));
+            Configuration::updateValue('PNP_BIZUM_NAME',   Tools::getValue('PNP_BIZUM_NAME'   . $envSuffix));
+            Configuration::updateValue('PNP_CHECKOUT_UUID',Tools::getValue('PNP_CHECKOUT_UUID'. $envSuffix));
+            Configuration::updateValue('PNP_CHECKOUT_NAME',Tools::getValue('PNP_CHECKOUT_NAME'. $envSuffix));
+            Configuration::updateValue('PNP_CHECKOUT_METHODS_CARD',    Tools::getValue('PNP_CHECKOUT_METHODS_CARD')    ? 1 : 0);
+            Configuration::updateValue('PNP_CHECKOUT_METHODS_BIZUM',   Tools::getValue('PNP_CHECKOUT_METHODS_BIZUM')   ? 1 : 0);
+            Configuration::updateValue('PNP_CHECKOUT_METHODS_SOFORT',  Tools::getValue('PNP_CHECKOUT_METHODS_SOFORT')  ? 1 : 0);
+            Configuration::updateValue('PNP_CHECKOUT_METHODS_IDEAL',   Tools::getValue('PNP_CHECKOUT_METHODS_IDEAL')   ? 1 : 0);
+            Configuration::updateValue('PNP_CHECKOUT_METHODS_CRYPTO',  Tools::getValue('PNP_CHECKOUT_METHODS_CRYPTO')  ? 1 : 0);
+            Configuration::updateValue('PNP_CHECKOUT_METHODS_PIX',     Tools::getValue('PNP_CHECKOUT_METHODS_PIX')     ? 1 : 0);
+            Configuration::updateValue('PNP_CHECKOUT_METHODS_VIACASH', Tools::getValue('PNP_CHECKOUT_METHODS_VIACASH') ? 1 : 0);
+            Configuration::updateValue('PNP_CHECKOUT_METHODS_KLARNA',  Tools::getValue('PNP_CHECKOUT_METHODS_KLARNA')  ? 1 : 0);
+            Configuration::updateValue('PNP_CHECKOUT_METHODS_GIROPAY', Tools::getValue('PNP_CHECKOUT_METHODS_GIROPAY') ? 1 : 0);
+            Configuration::updateValue('PNP_CHECKOUT_METHODS_GPAY',    Tools::getValue('PNP_CHECKOUT_METHODS_GPAY')    ? 1 : 0);
+            Configuration::updateValue('PNP_CHECKOUT_METHODS_APAY',    Tools::getValue('PNP_CHECKOUT_METHODS_APAY')    ? 1 : 0);
+            Configuration::updateValue('PNP_CHECKOUT_METHODS_C2PAY',   Tools::getValue('PNP_CHECKOUT_METHODS_C2PAY')   ? 1 : 0);
+            Configuration::updateValue('PNP_CHECKOUT_DEFAULT_METHOD', Tools::getValue('PNP_CHECKOUT_DEFAULT_METHOD'));
+            Configuration::updateValue('PNP_CHECKOUT_THEME', Tools::getValue('PNP_CHECKOUT_THEME'));
+            Configuration::updateValue('PNP_CHECKOUT_FONT', Tools::getValue('PNP_CHECKOUT_FONT'));
+            Configuration::updateValue('PNP_CHECKOUT_DESCRIPTION', Tools::getValue('PNP_CHECKOUT_DESCRIPTION'));
         }
         $this->_html .= $this->displayConfirmation($this->l('Settings updated'));
-    }
-
-    private function _displayCheck()
-    {
-        return $this->display(__FILE__, './views/templates/hook/infos.tpl');
     }
 
     /**
@@ -332,23 +448,53 @@ class Paylands extends \PaymentModule
 
     public function getContent()
     {
-        $this->_html = '';
+        $errors = array();
+        $success = false;
 
         if (Tools::isSubmit('btnSubmit')) {
             $this->_postValidation();
-            if (!count($this->_postErrors)) {
+            $errors = $this->_postErrors;
+            if (empty($errors)) {
                 $this->_postProcess();
-            } else {
-                foreach ($this->_postErrors as $err) {
-                    $this->_html .= $this->displayError($err);
-                }
+                $success = true;
             }
         }
 
-        $this->_html .= $this->_displayCheck();
-        $this->_html .= $this->renderForm();
+        $this->context->smarty->assign(array(
+            'form_action' => $this->context->link->getAdminLink('AdminModules', false)
+                . '&configure=' . $this->name
+                . '&tab_module=' . $this->tab
+                . '&module_name=' . $this->name,
+            'token'          => Tools::getAdminTokenLite('AdminModules'),
+            'config'         => $this->getConfigFieldsValues(),
+            'order_statuses' => $this->getOrderStatuses(),
+            'success'        => $success,
+            'errors'         => $errors,
+            'module_dir'     => $this->_path,
+            'form_languages' => array(
+                array('value' => 'store', 'label' => $this->l('Store language')),
+                array('value' => 'en',    'label' => $this->l('English')),
+                array('value' => 'es',    'label' => $this->l('Spanish')),
+                array('value' => 'de',    'label' => $this->l('Dutch')),
+                array('value' => 'pt',    'label' => $this->l('Portuguese')),
+                array('value' => 'fr',    'label' => $this->l('French')),
+            ),
+            'payment_methods' => array(
+                array('config_key' => 'PNP_CHECKOUT_METHODS_CARD',    'api_value' => 'PAYMENT_CARD', 'label' => $this->l('Payment Card'),  ),
+                array('config_key' => 'PNP_CHECKOUT_METHODS_GPAY',    'api_value' => 'GOOGLE_PAY',   'label' => $this->l('Google Pay'),    ),
+                array('config_key' => 'PNP_CHECKOUT_METHODS_APAY',    'api_value' => 'APPLE_PAY',    'label' => $this->l('Apple Pay'),     ),
+                array('config_key' => 'PNP_CHECKOUT_METHODS_BIZUM',   'api_value' => 'BIZUM',        'label' => $this->l('Bizum'),         ),
+                array('config_key' => 'PNP_CHECKOUT_METHODS_MBWAY',  'api_value' => 'MBWAY',       'label' => $this->l('MB WAY'),        ),
+                array('config_key' => 'PNP_CHECKOUT_METHODS_MULTIBANCO',  'api_value' => 'MULTIBANCO',       'label' => $this->l('Multibanco'),        ),
+                array('config_key' => 'PNP_CHECKOUT_METHODS_BANKTRANSFER',  'api_value' => 'TRANSFER',       'label' => $this->l('Bank Transfer'),        ),
+                array('config_key' => 'PNP_CHECKOUT_METHODS_PAYPAL',  'api_value' => 'PAYPAL',       'label' => $this->l('PayPal'),        ),
+                array('config_key' => 'PNP_CHECKOUT_METHODS_KLARNA',  'api_value' => 'KLARNA',       'label' => $this->l('Klarna'),        ),
+                array('config_key' => 'PNP_CHECKOUT_METHODS_REVOLUT_PAY',  'api_value' => 'REVOLUT_PAY',       'label' => $this->l('Revolut Pay'),        ),
+                array('config_key' => 'PNP_CHECKOUT_METHODS_C2PAY',   'api_value' => 'CLICKTOPAY',   'label' => $this->l('Click to Pay'),  ),
+            ),
+        ));
 
-        return $this->_html;
+        return $this->display(__FILE__, 'views/templates/admin/config.tpl');
     }
 
     public function getOrderStatuses()
@@ -376,21 +522,44 @@ class Paylands extends \PaymentModule
      */
     public function hookPaymentOptions($params)
     {
-        if (!$this->active) {
+        if (!$this->active || !$this->checkCurrency($params['cart'])) {
             return;
         }
 
-        if (!$this->checkCurrency($params['cart'])) {
-            return;
+        $options = array();
+        $isCheckoutMode = (int)Configuration::get('PNP_MODE') === 1;
+
+        if ($isCheckoutMode) {
+            // Checkout mode: show a single unified payment button (no separate Bizum)
+            $checkoutName = Configuration::get('PNP_CHECKOUT_NAME') ?: $this->l('Pay Securely');
+            $checkout = new \PrestaShop\PrestaShop\Core\Payment\PaymentOption();
+            $checkout->setModuleName($this->name)
+                ->setCallToActionText($checkoutName)
+                ->setAction($this->context->link->getModuleLink($this->name, 'validation', array(), true))
+                ->setLogo('https://paylands-web-assets.s3.eu-west-1.amazonaws.com/logos/visa-mc-small.png');
+            $options[] = $checkout;
+        } else {
+            // Service UUID mode: card button + optional Bizum button
+            $cardName = Configuration::get('PNP_SERVICE_NAME') ?: $this->l('Pay with Card Safely');
+            $card = new \PrestaShop\PrestaShop\Core\Payment\PaymentOption();
+            $card->setModuleName($this->name)
+                ->setCallToActionText($cardName)
+                ->setAction($this->context->link->getModuleLink($this->name, 'validation', array(), true))
+                ->setLogo('https://paylands-web-assets.s3.eu-west-1.amazonaws.com/logos/visa-mc-small.png');
+            $options[] = $card;
+
+            if ((int)Configuration::get('PNP_BIZUM_ENABLED') && Configuration::get('PNP_BIZUM_SERVICE')) {
+                $bizumName = Configuration::get('PNP_BIZUM_NAME') ?: $this->l('Pay with Bizum');
+                $bizum = new \PrestaShop\PrestaShop\Core\Payment\PaymentOption();
+                $bizum->setModuleName($this->name)
+                    ->setCallToActionText($bizumName)
+                    ->setAction($this->context->link->getModuleLink($this->name, 'validation', array('method' => 'bizum'), true))
+                    ->setLogo('https://paylands-web-assets.s3.eu-west-1.amazonaws.com/logos/bizum.png');
+                $options[] = $bizum;
+            }
         }
 
-        $newOption = new \PrestaShop\PrestaShop\Core\Payment\PaymentOption();
-        $newOption->setModuleName($this->name)
-            ->setCallToActionText($this->l('Pay with Card Safely'))
-            ->setAction($this->context->link->getModuleLink($this->name, 'validation', array(), true))
-            ->setLogo('https://paylands-web-assets.s3.eu-west-1.amazonaws.com/logos/visa-mc-small.png');
-
-        return array($newOption);
+        return $options;
     }
 
     /**
@@ -398,14 +567,41 @@ class Paylands extends \PaymentModule
      */
     public function hookPayment($params)
     {
-        if (!$this->active) {
+        if (!$this->active || !$this->checkCurrency($params['cart'])) {
             return;
         }
 
-        if (!$this->checkCurrency($params['cart'])) {
-            return;
+        $entries = array();
+        $isCheckoutMode = (int)Configuration::get('PNP_MODE') === 1;
+
+        if ($isCheckoutMode) {
+            // Checkout mode: single unified payment button (no separate Bizum)
+            $entries[] = array(
+                'id'   => 'checkout',
+                'name' => Configuration::get('PNP_CHECKOUT_NAME') ?: $this->l('Pay Securely'),
+                'url'  => $this->context->link->getModuleLink($this->name, 'payment', array(), true),
+                'logo' => $this->_path . 'logo.png',
+            );
+        } else {
+            // Service UUID mode: card + optional Bizum
+            $entries[] = array(
+                'id'   => 'card',
+                'name' => Configuration::get('PNP_SERVICE_NAME') ?: $this->l('Pay with Card Safely'),
+                'url'  => $this->context->link->getModuleLink($this->name, 'payment', array(), true),
+                'logo' => $this->_path . 'logo.png',
+            );
+
+            if ((int)Configuration::get('PNP_BIZUM_ENABLED') && Configuration::get('PNP_BIZUM_SERVICE')) {
+                $entries[] = array(
+                    'id'   => 'bizum',
+                    'name' => Configuration::get('PNP_BIZUM_NAME') ?: $this->l('Pay with Bizum'),
+                    'url'  => $this->context->link->getModuleLink($this->name, 'payment', array('method' => 'bizum'), true),
+                    'logo' => $this->_path . 'views/img/bizum.png',
+                );
+            }
         }
 
+        $this->context->smarty->assign('pnp_payment_entries', $entries);
         return $this->display(__FILE__, 'payment.tpl');
     }
 
@@ -424,194 +620,159 @@ class Paylands extends \PaymentModule
         return false;
     }
 
-    public function renderForm()
+    public function getCheckoutExtraData()
     {
-        $fields_form = array(
-            'form' => array(
-                'legend' => array(
-                    'title' => $this->l('Paylands Configuration'),
-                    'image' => '../modules/paylands/views/img/paylands-logo.png'
-                ),
-                'input' => array(
-                    array(
-                        'type' => 'radio',
-                        'label' => $this->l('Environment'),
-                        'name' => 'PNP_ENVIRONMENT',
-                        'required' => true,
-                        'values' => array(
-                            array(
-                                'id' => 'prod_mod',
-                                'value' => 0,
-                                'label' => $this->l('Production Mode')
-                            ),
-                            array(
-                                'id' => 'sandbox_mode',
-                                'value' => 1,
-                                'label' => $this->l('Sandbox Mode')
-                            )
-                        ),
-                    ),
-                    array(
-                        'type' => 'text',
-                        'label' => $this->l('Service'),
-                        'name' => 'PNP_SERVICE',
-                        'required' => true
-                    ),
-                    array(
-                        'type' => 'text',
-                        'label' => $this->l('Signature'),
-                        'name' => 'PNP_SIGNATURE',
-                        'required' => true
-                    ),
-                    array(
-                        'type' => 'text',
-                        'label' => $this->l('Api key'),
-                        'name' => 'PNP_KEY',
-                        'required' => true
-                    ),
-                    array(
-                        'type' => 'radio',
-                        'label' => $this->l('Secure Payment'),
-                        'name' => 'PNP_SECURE',
-                        'required' => true,
-                        'values' => array(
-                            array(
-                                'id' => 'secure_yes',
-                                'value' => 0,
-                                'label' => $this->l('No')
-                            ),
-                            array(
-                                'id' => 'secure_no',
-                                'value' => 1,
-                                'label' => $this->l('Yes')
-                            )
-                        )
-                    ),
-                    array(
-                        'type' => 'radio',
-                        'label' => $this->l('Remember Cards'),
-                        'name' => 'PNP_SAVE_CARD',
-                        'required' => true,
-                        'values' => array(
-                            array(
-                                'id' => 'save_cards_yes',
-                                'value' => 0,
-                                'label' => $this->l('No')
-                            ),
-                            array(
-                                'id' => 'save_cards_no',
-                                'value' => 1,
-                                'label' => $this->l('Yes')
-                            )
-                        )
-                    ),
-                    array(
-                        'type' => 'select',
-                        'label' => $this->l('Order Waiting State'),
-                        'name' => 'PNP_ORDER_WAITING_STATE',
-                        'required' => true,
-                        'options' => array(
-                            'query' => $this->getOrderStatuses(),
-                            'id' => 'id_option',
-                            'name' => 'name'
-                        )
-                    ),
-                    array(
-                        'type' => 'select',
-                        'label' => $this->l('Order Success State'),
-                        'name' => 'PNP_ORDER_SUCCESS_STATE',
-                        'required' => true,
-                        'options' => array(
-                            'query' => $this->getOrderStatuses(),
-                            'id' => 'id_option',
-                            'name' => 'name'
-                        )
-                    ),
-                    array(
-                        'type' => 'text',
-                        'label' => $this->l('Payment Form Logo'),
-                        'name' => 'PNP_LOGO',
-                        'required' => true
-                    ),
-                    array(
-                        'type' => 'text',
-                        'label' => $this->l('Payment Text Color'),
-                        'name' => 'PNP_FACE_COLOR',
-                        'required' => true
-                    ),
-                    array(
-                        'type' => 'select',
-                        'label' => $this->l('Payment Form Language'),
-                        'name' => 'PNP_FORM_LANG',
-                        'required' => true,
-                        'options' => array(
-                            'query' => array(
-                                array(
-                                    'id_option' => 'store',
-                                    'name' => $this->l('Store Lang')
-                                ),
-                                array(
-                                    'id_option' => 'en',
-                                    'name' => $this->l('English')
-                                ),
-                                array(
-                                    'id_option' => 'es',
-                                    'name' => $this->l('Spanish')
-                                ),
-                                array(
-                                    'id_option' => 'de',
-                                    'name' => $this->l('Dutch')
-                                ),
-                                array(
-                                    'id_option' => 'pt',
-                                    'name' => $this->l('Portuguese')
-                                ),
-                                array(
-                                    'id_option' => 'fr',
-                                    'name' => $this->l('French')
-                                ),
-                            ),
-                            'id' => 'id_option',
-                            'name' => 'name'
-                        )
-                    ),
-                ),
-                'submit' => array(
-                    'title' => $this->l('Save'),
-                )
-            ),
+        if (!(int)Configuration::get('PNP_MODE')) {
+            return array();
+        }
+
+        $method_map = array(
+            'PNP_CHECKOUT_METHODS_CARD'    => 'PAYMENT_CARD',
+            'PNP_CHECKOUT_METHODS_BIZUM'   => 'BIZUM',
+            'PNP_CHECKOUT_METHODS_SOFORT'  => 'SOFORT',
+            'PNP_CHECKOUT_METHODS_IDEAL'   => 'IDEAL',
+            'PNP_CHECKOUT_METHODS_CRYPTO'  => 'CRYPTO',
+            'PNP_CHECKOUT_METHODS_PIX'     => 'PIX',
+            'PNP_CHECKOUT_METHODS_VIACASH' => 'VIACASH',
+            'PNP_CHECKOUT_METHODS_KLARNA'  => 'KLARNA',
+            'PNP_CHECKOUT_METHODS_GIROPAY' => 'GIROPAY',
+            'PNP_CHECKOUT_METHODS_GPAY'    => 'GOOGLE_PAY',
+            'PNP_CHECKOUT_METHODS_APAY'    => 'APPLE_PAY',
+            'PNP_CHECKOUT_METHODS_C2PAY'   => 'CLICKTOPAY',
         );
 
-        $helper = new HelperForm();
-        $helper->show_toolbar = false;
-        $helper->module = $this;
-        $helper->identifier = $this->identifier;
-        $helper->submit_action = 'btnSubmit';
-        $helper->currentIndex = $this->context->link->getAdminLink('AdminModules', false) . '&configure=' . $this->name . '&tab_module=' . $this->tab . '&module_name=' . $this->name;
-        $helper->token = Tools::getAdminTokenLite('AdminModules');
-        $helper->tpl_vars = array(
-            'fields_value' => $this->getConfigFieldsValues(),
-        );
+        $payment_methods = array();
+        foreach ($method_map as $config_key => $api_value) {
+            if ((int)Configuration::get($config_key)) {
+                $payment_methods[] = $api_value;
+            }
+        }
 
-        $this->fields_form = array();
+        $checkout = array('uuid' => Configuration::get('PNP_CHECKOUT_UUID'));
 
-        return $helper->generateForm(array($fields_form));
+        if (!empty($payment_methods)) {
+            $checkout['payment_methods'] = $payment_methods;
+        }
+
+        $default = Configuration::get('PNP_CHECKOUT_DEFAULT_METHOD');
+        if (!empty($default)) {
+            $checkout['default_payment_method'] = $default;
+        }
+
+        $customization = array();
+        $theme = Configuration::get('PNP_CHECKOUT_THEME');
+        if (!empty($theme)) {
+            $customization['theme_type'] = $theme;
+        }
+        $font = Configuration::get('PNP_CHECKOUT_FONT');
+        if (!empty($font)) {
+            $customization['font'] = $font;
+        }
+        $desc = Configuration::get('PNP_CHECKOUT_DESCRIPTION');
+        if (!empty($desc)) {
+            $customization['description'] = $desc;
+        }
+        if (!empty($customization)) {
+            $customization['payment_details'] = new \stdClass();
+            $checkout['customization'] = $customization;
+        }
+
+        return array('checkout' => $checkout);
     }
 
     public function getConfigFieldsValues()
     {
         return array(
             'PNP_ENVIRONMENT' => Tools::getValue('PNP_ENVIRONMENT', Configuration::get('PNP_ENVIRONMENT')),
-            'PNP_SERVICE' => Tools::getValue('PNP_SERVICE', Configuration::get('PNP_SERVICE')),
-            'PNP_SIGNATURE' => Tools::getValue('PNP_SIGNATURE', Configuration::get('PNP_SIGNATURE')),
-            'PNP_KEY' => Tools::getValue('PNP_KEY', Configuration::get('PNP_KEY')),
+            'PNP_KEY_PROD'            => Configuration::get('PNP_KEY_PROD'),
+            'PNP_KEY_SANDBOX'         => Configuration::get('PNP_KEY_SANDBOX'),
+            'PNP_SIGNATURE_PROD'      => Configuration::get('PNP_SIGNATURE_PROD'),
+            'PNP_SIGNATURE_SANDBOX'   => Configuration::get('PNP_SIGNATURE_SANDBOX'),
+            'PNP_SERVICE_PROD'        => Configuration::get('PNP_SERVICE_PROD'),
+            'PNP_SERVICE_SANDBOX'     => Configuration::get('PNP_SERVICE_SANDBOX'),
+            'PNP_SERVICE_NAME_PROD'   => Configuration::get('PNP_SERVICE_NAME_PROD'),
+            'PNP_SERVICE_NAME_SANDBOX'=> Configuration::get('PNP_SERVICE_NAME_SANDBOX'),
+            'PNP_BIZUM_SERVICE_PROD'  => Configuration::get('PNP_BIZUM_SERVICE_PROD'),
+            'PNP_BIZUM_SERVICE_SANDBOX'=> Configuration::get('PNP_BIZUM_SERVICE_SANDBOX'),
+            'PNP_BIZUM_NAME_PROD'     => Configuration::get('PNP_BIZUM_NAME_PROD'),
+            'PNP_BIZUM_NAME_SANDBOX'  => Configuration::get('PNP_BIZUM_NAME_SANDBOX'),
+            'PNP_CHECKOUT_UUID_PROD'  => Configuration::get('PNP_CHECKOUT_UUID_PROD'),
+            'PNP_CHECKOUT_UUID_SANDBOX'=> Configuration::get('PNP_CHECKOUT_UUID_SANDBOX'),
+            'PNP_CHECKOUT_NAME_PROD'  => Configuration::get('PNP_CHECKOUT_NAME_PROD'),
+            'PNP_CHECKOUT_NAME_SANDBOX'=> Configuration::get('PNP_CHECKOUT_NAME_SANDBOX'),
             'PNP_SECURE' => Tools::getValue('PNP_SECURE', Configuration::get('PNP_SECURE')),
             'PNP_SAVE_CARD' => Tools::getValue('PNP_SAVE_CARD', Configuration::get('PNP_SAVE_CARD')),
             'PNP_ORDER_WAITING_STATE' => Tools::getValue('PNP_ORDER_WAITING_STATE', Configuration::get('PNP_ORDER_WAITING_STATE')),
             'PNP_ORDER_SUCCESS_STATE' => Tools::getValue('PNP_ORDER_SUCCESS_STATE', Configuration::get('PNP_ORDER_SUCCESS_STATE')),
             'PNP_LOGO' => Tools::getValue('PNP_LOGO', Configuration::get('PNP_LOGO')),
             'PNP_FACE_COLOR' => Tools::getValue('PNP_FACE_COLOR', Configuration::get('PNP_FACE_COLOR')),
-            'PNP_FORM_LANG' => Tools::getValue('PNP_FORM_LANG', Configuration::get('PNP_FORM_LANG')),
+            'PNP_FORM_LANG'     => Tools::getValue('PNP_FORM_LANG', Configuration::get('PNP_FORM_LANG')),
+            'PNP_SERVICE_NAME'  => Tools::getValue('PNP_SERVICE_NAME', Configuration::get('PNP_SERVICE_NAME')),
+            'PNP_BIZUM_ENABLED' => Configuration::get('PNP_BIZUM_ENABLED'),
+            'PNP_BIZUM_SERVICE' => Tools::getValue('PNP_BIZUM_SERVICE', Configuration::get('PNP_BIZUM_SERVICE')),
+            'PNP_BIZUM_NAME'    => Tools::getValue('PNP_BIZUM_NAME', Configuration::get('PNP_BIZUM_NAME')),
+            'PNP_MODE' => Tools::getValue('PNP_MODE', Configuration::get('PNP_MODE')),
+            'PNP_CHECKOUT_UUID' => Tools::getValue('PNP_CHECKOUT_UUID', Configuration::get('PNP_CHECKOUT_UUID')),
+            'PNP_CHECKOUT_NAME' => Tools::getValue('PNP_CHECKOUT_NAME', Configuration::get('PNP_CHECKOUT_NAME')),
+            'PNP_CHECKOUT_METHODS_CARD'    => Configuration::get('PNP_CHECKOUT_METHODS_CARD'),
+            'PNP_CHECKOUT_METHODS_BIZUM'   => Configuration::get('PNP_CHECKOUT_METHODS_BIZUM'),
+            'PNP_CHECKOUT_METHODS_SOFORT'  => Configuration::get('PNP_CHECKOUT_METHODS_SOFORT'),
+            'PNP_CHECKOUT_METHODS_IDEAL'   => Configuration::get('PNP_CHECKOUT_METHODS_IDEAL'),
+            'PNP_CHECKOUT_METHODS_CRYPTO'  => Configuration::get('PNP_CHECKOUT_METHODS_CRYPTO'),
+            'PNP_CHECKOUT_METHODS_PIX'     => Configuration::get('PNP_CHECKOUT_METHODS_PIX'),
+            'PNP_CHECKOUT_METHODS_VIACASH' => Configuration::get('PNP_CHECKOUT_METHODS_VIACASH'),
+            'PNP_CHECKOUT_METHODS_KLARNA'  => Configuration::get('PNP_CHECKOUT_METHODS_KLARNA'),
+            'PNP_CHECKOUT_METHODS_GIROPAY' => Configuration::get('PNP_CHECKOUT_METHODS_GIROPAY'),
+            'PNP_CHECKOUT_METHODS_GPAY'    => Configuration::get('PNP_CHECKOUT_METHODS_GPAY'),
+            'PNP_CHECKOUT_METHODS_APAY'    => Configuration::get('PNP_CHECKOUT_METHODS_APAY'),
+            'PNP_CHECKOUT_METHODS_C2PAY'   => Configuration::get('PNP_CHECKOUT_METHODS_C2PAY'),
+            'PNP_CHECKOUT_DEFAULT_METHOD'  => Tools::getValue('PNP_CHECKOUT_DEFAULT_METHOD', Configuration::get('PNP_CHECKOUT_DEFAULT_METHOD')),
+            'PNP_CHECKOUT_THEME'           => Tools::getValue('PNP_CHECKOUT_THEME', Configuration::get('PNP_CHECKOUT_THEME')),
+            'PNP_CHECKOUT_FONT'            => Tools::getValue('PNP_CHECKOUT_FONT', Configuration::get('PNP_CHECKOUT_FONT')),
+            'PNP_CHECKOUT_DESCRIPTION'     => Tools::getValue('PNP_CHECKOUT_DESCRIPTION', Configuration::get('PNP_CHECKOUT_DESCRIPTION')),
+        );
+    }
+
+    public function saveCartPaylandsId($cart_id, $paylands_uuid)
+    {
+        $now = date('Y-m-d H:i:s');
+        $existing = Db::getInstance()->getValue(
+            'SELECT id FROM `' . _DB_PREFIX_ . 'pnp_paylands_orders` WHERE ps_cart_id = ' . (int)$cart_id
+        );
+        if ($existing) {
+            return Db::getInstance()->update(
+                'pnp_paylands_orders',
+                array('order_uuid' => pSQL($paylands_uuid), 'updated_at' => $now),
+                'ps_cart_id = ' . (int)$cart_id
+            );
+        }
+        return Db::getInstance()->insert('pnp_paylands_orders', array(
+            'customer_id' => '',
+            'order_uuid' => pSQL($paylands_uuid),
+            'client_uuid' => '',
+            'ps_cart_id' => (int)$cart_id,
+            'order_token' => '',
+            'amount' => 0,
+            'currency' => '',
+            'paid' => 0,
+            'safe' => 0,
+            'raw_order' => '',
+            'created_at' => $now,
+            'updated_at' => $now,
+        ));
+    }
+
+    public function getCartPaylandsId($cart_id)
+    {
+        return Db::getInstance()->getValue(
+            'SELECT order_uuid FROM `' . _DB_PREFIX_ . 'pnp_paylands_orders` WHERE ps_cart_id = ' . (int)$cart_id
+        );
+    }
+
+    public function getCartByPaylandsId($paylands_uuid)
+    {
+        return Db::getInstance()->getValue(
+            'SELECT ps_cart_id FROM `' . _DB_PREFIX_ . 'pnp_paylands_orders` WHERE order_uuid = "' . pSQL($paylands_uuid) . '"'
         );
     }
 }
