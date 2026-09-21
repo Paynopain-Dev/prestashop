@@ -23,48 +23,53 @@
 *  International Registered Trademark & Property of PrestaShop SA
 *}
 
+<link href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.css" rel="stylesheet">
+<style type="text/css">
+    .fancybox-slide--iframe .fancybox-content {
+        max-width: 80%;
+        max-height: 80%;
+        margin: 0;
+    }
+</style>
+
 <div class="row">
     <div class="col-xs-12">
+        {foreach from=$pnp_payment_entries item=entry}
         <p class="payment_module">
-            <a class="bankwire" id="paylands_payment_button" href="javascript:void(0);">
-                <img src="{$module_dir|escape:'htmlall':'UTF-8'}logo.png"
-                     alt="{l s='Pay with Card Safely' mod='paylands'}"/>
-                {l s='Pay with Card Safely' mod='paylands'}
+            <a class="bankwire pnp-payment-btn" href="javascript:void(0);"
+               data-pnp-url="{$entry.url|escape:'htmlall':'UTF-8'}"
+               data-pnp-id="{$entry.id|escape:'htmlall':'UTF-8'}">
+                {if $entry.logo}
+                <img src="{$entry.logo|escape:'htmlall':'UTF-8'}" alt="{$entry.name|escape:'htmlall':'UTF-8'}"/>
+                {/if}
+                {$entry.name|escape:'htmlall':'UTF-8'}
             </a>
         </p>
+        {/foreach}
         <input type="hidden" name="redirect" value="">
-        <section>
-            <link href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.css" rel="stylesheet">
-            <style type="text/css">
-                .fancybox-slide--iframe .fancybox-content {
-                    max-width: 80%;
-                    max-height: 80%;
-                    margin: 0;
-                }
-            </style>
-            <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
-            <script src="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.js"></script>
-            <input type="hidden" name="redirect" value="">
-            <script type="text/javascript"><!--
-                $("#paylands_payment_button").on('click', function (e) {
-                    jQuery.fancybox.open({
-                        src: "{$link->getModuleLink('paylands', 'payment', [], true)|escape:'htmlall':'UTF-8'}",
-                        type: 'iframe',
-                        iframe: {
-                            css: {
-                                width: '600px'
-                            }
-                        },
-                        beforeClose: function (instance, current, e) {
-                            var redirect = jQuery("input[name='redirect']").val();
-                            if (redirect === '') {
-                                return false;
-                            }
-                            window.location.replace(redirect);
-                        }
-                    });
-                });
-                //--></script>
-        </section>
     </div>
 </div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.js"></script>
+<script type="text/javascript"><!--
+    $(".pnp-payment-btn").on('click', function (e) {
+        var url = $(this).data('pnp-url');
+        jQuery.fancybox.open({
+            src: url,
+            type: 'iframe',
+            iframe: {
+                css: {
+                    width: '600px'
+                }
+            },
+            beforeClose: function (instance, current, e) {
+                var redirect = jQuery("input[name='redirect']").val();
+                if (redirect === '') {
+                    return false;
+                }
+                window.location.replace(redirect);
+            }
+        });
+    });
+//--></script>

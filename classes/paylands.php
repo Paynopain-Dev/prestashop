@@ -22,7 +22,7 @@ class PaylandsConector
 	 */
 	public function createCustomer($customerId = 'user1024')
 	{
-		$data["customer_ext_id"] = $customerId;
+		$data["customer_ext_id"] = "".$customerId;
 		$response = $this->request("customer", $data, true);
 		return $response->Customer->token;
 	}
@@ -143,7 +143,7 @@ class PaylandsConector
 			'amount' => $order->getOrderTotal(true, Cart::BOTH) * 100,
 			'operative' => 'AUTHORIZATION',
 			'additional' => 'usuario',
-			'customer_ext_id' => $customerId,
+			'customer_ext_id' => "" . $customerId,
 			'service' => $this->getConfigValue('PNP_SERVICE'),
 			"url_post" => Context::getContext()->link->getModuleLink('paylands', 'update'),
 			"template_uuid" => $this->getConfigValue('PNP_SERVICE'),

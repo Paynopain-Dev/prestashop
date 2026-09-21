@@ -53,7 +53,8 @@ class paylandsvalidationModuleFrontController extends ModuleFrontController
             Tools::redirect('index.php?controller=order&step=1');
         }
 
-        Tools::redirect(Context::getContext()->link->getModuleLink('paylands', 'checkout', array(), true));
+        $method = Tools::getValue('method', '');
+        Tools::redirect(Context::getContext()->link->getModuleLink('paylands', 'checkout', $method ? array('method' => $method) : array(), true));
 
 
         /*$currency = $this->context->currency;

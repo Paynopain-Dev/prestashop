@@ -50,10 +50,7 @@ class paylandsPaywithformModuleFrontController extends ModuleFrontController
         $env = (int)Configuration::get('PNP_ENVIRONMENT');
         $environment = !empty($env) ? 'sandbox' : 'prod';
 
-        $lang = Configuration::get('PNP_FORM_LANG');
-        if ($lang == 'store') {
-            $lang = $this->context->language->iso_code;
-        }
+        $lang = $this->module->getFormLanguage();
 
         $total = $cart->getOrderTotal(true, Cart::BOTH);
         $pnpOrder = new PaymentOrder(Configuration::get('PNP_KEY'), Configuration::get('PNP_SIGNATURE'), Configuration::get('PNP_SERVICE'), $environment);
@@ -67,7 +64,9 @@ class paylandsPaywithformModuleFrontController extends ModuleFrontController
             Context::getContext()->link->getModuleLink('paylands', 'paymentcallback', array('id' => $cart->id), true),
             Context::getContext()->link->getModuleLink('paylands', 'landingok', array('id' => $cart->id), true),
             Context::getContext()->link->getModuleLink('paylands', 'landingko', array('id' => $cart->id), true),
-            ''
+            '',
+            $this->module->getCheckoutExtraData(),
+            $cart
         );
 
         $url_redirect = Context::getContext()->link->getModuleLink('paylands', 'landingko', array('id' => $cart->id), true);
@@ -87,7 +86,6 @@ class paylandsPaywithformModuleFrontController extends ModuleFrontController
             );
 
             $this->module->validateOrder((int)$cart->id, Configuration::get('PNP_ORDER_WAITING_STATE'), $total, $this->module->name, null, $order_details, (int)$cart->id_currency, false, $customer->secure_key);
-            $order_id = 0;
             if (_PS_VERSION_ >= 1.7) {
                 $order_id = (int)Order::getIdByCartId((int)$cart->id);
             } else {
@@ -95,7 +93,8 @@ class paylandsPaywithformModuleFrontController extends ModuleFrontController
             }
             $this->module->createPaylandsOrder($order, $cart->id, $order_id);
         } else {
-            $this->module->validateOrder((int)$cart->id, Configuration::get('PS_OS_ERROR'), $total, $this->module->name, null, array(), (int)$cart->id_currency, false, $customer->secure_key);
+            // The payment never started, so no order is created: the cart is left
+            // untouched and the customer can retry without piling up failed orders.
             \Logger::error("cartId:" . $cart->id . "#PaylandsOrder:" . json_encode($order, JSON_PRETTY_PRINT));
         }
 

@@ -19,6 +19,12 @@ class paylandsUpdateModuleFrontController extends ModuleFrontController
 	public function postProcess()
 	{
 		$json = file_get_contents('php://input');
+
+		if (!$this->module->verifyNotification($json)) {
+			header('HTTP/1.1 403 Forbidden');
+			return false;
+		}
+
 		$data = json_decode($json);
 		$order = $data->order;
 		if ($order && $order->status == 'SUCCESS') {

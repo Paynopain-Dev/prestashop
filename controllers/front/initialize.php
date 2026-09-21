@@ -9,7 +9,7 @@ class paylandsInitializeModuleFrontController extends ModuleFrontController
 	 */
 	public function displayAjax()
 	{
-		$uuid = $_GET['uuid'];
+		$uuid = Tools::getValue('uuid');
 		$cart = Context::getContext()->cart;
 		$paylandsModel = new PaylandsConector();
 		$response = $paylandsModel->getPayment($uuid, $cart);

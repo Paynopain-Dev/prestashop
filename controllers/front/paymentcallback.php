@@ -36,19 +36,39 @@ class paylandsPaymentcallbackModuleFrontController extends ModuleFrontController
         if (!$this->module->checkCurrency($cart)) {
             die('ko');
         }
-        $data = json_decode(Tools::file_get_contents('php://input'), true);
+
+        $raw_body = file_get_contents('php://input');
+        $data = json_decode($raw_body, true);
 
         \Logger::log("PNP_CALLBACK#CartId:" . $cart->id . "#paylandsCallbackData:" . json_encode($data, JSON_PRETTY_PRINT));
+
+        if (!$this->module->verifyNotification($raw_body)) {
+            header('HTTP/1.1 403 Forbidden');
+            die('ko');
+        }
+
+        // The signed notification must belong to the cart it is being applied to,
+        // otherwise a genuine notification could be replayed against another cart.
+        if (empty($data['order']['uuid'])
+            || (int)$this->module->getCartByPaylandsId($data['order']['uuid']) !== (int)$cart->id
+        ) {
+            \Logger::error("PNP_CALLBACK#REJECTED:CartId:" . $cart->id . "#order does not belong to this cart");
+            header('HTTP/1.1 403 Forbidden');
+            die('ko');
+        }
 
         if (!empty($data)) {
             $customer = new Customer($cart->id_customer);
 
-            $order_ps = '';
             if (_PS_VERSION_ >= 1.7) {
                 $order_ps = Order::getByCartId($cart->id);
             } else {
-                $order_id = Order::getOrderByCartId($cart->id);
-                $order_ps = new Order($order_id);
+                $order_ps = new Order(Order::getOrderByCartId($cart->id));
+            }
+
+            if (!Validate::isLoadedObject($order_ps)) {
+                \Logger::error("PNP_CALLBACK#REJECTED:CartId:" . $cart->id . "#no PrestaShop order for this cart");
+                die('ko');
             }
 
             if ($data['order']['status'] == 'SUCCESS') {

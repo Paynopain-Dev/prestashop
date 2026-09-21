@@ -40,8 +40,9 @@ class paylandsCheckoutModuleFrontController extends ModuleFrontController
             Tools::redirect('index.php?controller=order');
         }
 
+        $method = Tools::getValue('method', '');
         Tools::redirect(
-            Context::getContext()->link->getModuleLink('paylands', 'payment', array(), true)
+            Context::getContext()->link->getModuleLink('paylands', 'payment', $method ? array('method' => $method) : array(), true)
         );
     }
 }

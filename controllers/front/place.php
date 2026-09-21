@@ -35,8 +35,7 @@ class paylandsPlaceModuleFrontController extends ModuleFrontController
 				if (_PS_VERSION_ >= 1.7) {
 					$order_ps = Order::getByCartId($cart->id);
 				} else {
-					$order_id = Order::getOrderByCartId($cart->id);
-					$order_ps = new Order($order_id);
+					$order_ps = new Order(Order::getOrderByCartId($cart->id));
 				}
 				$this->module->validateOrder((int)$cart->id, Configuration::get('PNP_ORDER_WAITING_STATE'), $total, $this->module->name, null, $order_details, (int)$cart->id_currency, false, $customer->secure_key);
 				$params = [

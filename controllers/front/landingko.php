@@ -60,13 +60,18 @@ class paylandsLandingkoModuleFrontController extends ModuleFrontController
         }
 
         if ($success) {
-            $order_id = 0;
             if (_PS_VERSION_ >= 1.7) {
                 $order_id = (int)Order::getIdByCartId((int)$cart->id);
             } else {
                 $order_id = (int)Order::getOrderByCartId($cart->id);
             }
-            $url_redirect = 'index.php?controller=order-confirmation&id_cart=' . (int)$cart->id . '&id_module=' . (int)$this->module->id . '&id_order=' . $order_id . '&key=' . $customer->secure_key;
+            if ($order_id) {
+                $url_redirect = 'index.php?controller=order-confirmation&id_cart=' . (int)$cart->id . '&id_module=' . (int)$this->module->id . '&id_order=' . $order_id . '&key=' . $customer->secure_key;
+            } else {
+                // No order was placed (the payment could not even be started): send the
+                // customer back to the checkout so they can try again.
+                $url_redirect = 'index.php?controller=order';
+            }
         }
 
         $this->context->smarty->assign(

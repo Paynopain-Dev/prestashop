@@ -57,10 +57,7 @@ class paylandsPaywithcardModuleFrontController extends ModuleFrontController
         $environment = !empty($env) ? 'sandbox' : 'prod';
         $card_source_id = $secure_payment ? $user_card['card_uuid'] : '';
 
-        $lang = Configuration::get('PNP_FORM_LANG');
-        if ($lang == 'store') {
-            $lang = $this->context->language->iso_code;
-        }
+        $lang = $this->module->getFormLanguage();
 
         $total = $cart->getOrderTotal(true, Cart::BOTH);
         $pnpOrder = new PaymentOrder(Configuration::get('PNP_KEY'), Configuration::get('PNP_SIGNATURE'), Configuration::get('PNP_SERVICE'), $environment);
@@ -74,7 +71,9 @@ class paylandsPaywithcardModuleFrontController extends ModuleFrontController
             Context::getContext()->link->getModuleLink('paylands', 'paymentcallback', array('id' => $cart->id), true),
             Context::getContext()->link->getModuleLink('paylands', 'landingok', array('id' => $cart->id), true),
             Context::getContext()->link->getModuleLink('paylands', 'landingko', array('id' => $cart->id), true),
-            $card_source_id
+            $card_source_id,
+            array(),
+            $cart
         );
 
         $url_redirect = Context::getContext()->link->getModuleLink('paylands', 'landingko', array('id' => $cart->id), true);
@@ -93,12 +92,10 @@ class paylandsPaywithcardModuleFrontController extends ModuleFrontController
                 'date_transaction' => date("Y-m-d H:i:s")
             );
 
-            $order_ps = '';
             if (_PS_VERSION_ >= 1.7) {
                 $order_ps = Order::getByCartId($cart->id);
             } else {
-                $order_id = Order::getOrderByCartId($cart->id);
-                $order_ps = new Order($order_id);
+                $order_ps = new Order(Order::getOrderByCartId($cart->id));
             }
             $this->module->validateOrder((int)$cart->id, Configuration::get('PNP_ORDER_WAITING_STATE'), $total, $this->module->name, null, $order_details, (int)$cart->id_currency, false, $customer->secure_key);
             $this->module->createPaylandsOrder($order, $cart->id, $order_ps->id);
@@ -118,7 +115,8 @@ class paylandsPaywithcardModuleFrontController extends ModuleFrontController
                 }
             }
         } else {
-            $this->module->validateOrder((int)$cart->id, Configuration::get('PS_OS_ERROR'), $total, $this->module->name, null, array(), (int)$cart->id_currency, false, $customer->secure_key);
+            // The payment never started, so no order is created: the cart is left
+            // untouched and the customer can retry without piling up failed orders.
             \Logger::error("cartId:" . $cart->id . "#PaylandsOrder:" . json_encode($order, JSON_PRETTY_PRINT));
         }
 

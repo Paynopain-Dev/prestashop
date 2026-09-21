@@ -48,6 +48,9 @@ class paylandsPaymentModuleFrontController extends ModuleFrontController
             Tools::redirect('index.php?controller=order&step=1');
         }
 
+        $method = Tools::getValue('method', 'card');
+        $isBizum = ($method === 'bizum' && (int)Configuration::get('PNP_BIZUM_ENABLED') && Configuration::get('PNP_BIZUM_SERVICE'));
+
         $sql = new DbQuery();
         $sql->select('id, status')
             ->from('pnp_paylands_orders')
@@ -66,31 +69,29 @@ class paylandsPaymentModuleFrontController extends ModuleFrontController
         $secure_payment = (int)Configuration::get('PNP_SECURE');
         $save_cards = Configuration::get('PNP_SAVE_CARD');
 
-        $lang = Configuration::get('PNP_FORM_LANG');
-        if ($lang == 'store') {
-            $lang = $this->context->language->iso_code;
-        }
+        $lang = $this->module->getFormLanguage();
 
         $customer_cards = array();
-        if (empty($customer->is_guest)) { // customer->is_guest = 1 is a guest user
+        if (!$isBizum && empty($customer->is_guest)) {
             $sql = new DbQuery();
             $sql->select('id, card_uuid, type, card_token, last4, brand, expire_month, expire_year')
                 ->from('pnp_paylands_cards')
                 ->where('customer_id = ' . (int)$cart->id_customer);
 
             $customer_cards = Db::getInstance()->executeS($sql);
-
         }
 
         if (
-            empty($save_cards)
+            $isBizum
+            || empty($save_cards)
             || !count($customer_cards)
             || !empty($customer->is_guest)
         ) {
             $env = (int)Configuration::get('PNP_ENVIRONMENT');
             $environment = !empty($env) ? 'sandbox' : 'prod';
             $total = $cart->getOrderTotal(true, Cart::BOTH);
-            $pnpOrder = new PaymentOrder(Configuration::get('PNP_KEY'), Configuration::get('PNP_SIGNATURE'), Configuration::get('PNP_SERVICE'), $environment);
+            $serviceUuid = $isBizum ? Configuration::get('PNP_BIZUM_SERVICE') : Configuration::get('PNP_SERVICE');
+            $pnpOrder = new PaymentOrder(Configuration::get('PNP_KEY'), Configuration::get('PNP_SIGNATURE'), $serviceUuid, $environment);
 
             $params = [
                 'id_cart' => (int) $cart->id,
@@ -100,30 +101,34 @@ class paylandsPaymentModuleFrontController extends ModuleFrontController
 
             $url_ok = Context::getContext()->link->getPageLink('order-confirmation', true, null, $params, false);
 
+            $extraData = $isBizum ? array() : $this->module->getCheckoutExtraData();
+
             $order = $pnpOrder->createOrder(
                 $total,
                 "AUTHORIZATION",
                 $cart->id_customer,
                 "PSCartId:" . $cart->id,
                 (string)$cart->id,
-                $secure_payment || !empty($customer->is_guest), // anonymous user will use 3ds
+                $isBizum ? true : ($secure_payment || !empty($customer->is_guest)),
                 Context::getContext()->link->getModuleLink('paylands', 'paymentcallback', array('id' => $cart->id), true),
-                //Context::getContext()->link->getModuleLink('paylands', 'landingok', array('id' => $cart->id), true),
                 $url_ok,
                 Context::getContext()->link->getModuleLink('paylands', 'landingko', array('id' => $cart->id), true),
-                ''
+                '',
+                $extraData,
+                $cart
             );
 
             if (empty($order) || $order['code'] != 200) {
-                $this->module->validateOrder((int)$cart->id, Configuration::get('PS_OS_ERROR'), $total, $this->module->name, null, array(), (int)$cart->id_currency, false, $customer->secure_key);
+                // The payment never started, so no order is created: the cart is left
+                // untouched and the customer can retry without piling up failed orders.
                 \Logger::error("cartId:" .$cart->id. "#PaylandsOrder:" . json_encode($order, JSON_PRETTY_PRINT));
-                return Tools::redirect(Context::getContext()->link->getModuleLink('paylands', 'ko', array('id' => $cart->id), true));
+                return Tools::redirect(Context::getContext()->link->getModuleLink('paylands', 'landingko', array('id' => $cart->id), true));
             }
 
             \Logger::log("cartId:" .$cart->id. "#PaylandsOrder:" . json_encode($order, JSON_PRETTY_PRINT));
 
             $order_details = array(
-                'method' => $this->module->name,
+                'method' => $method,
                 'currency' => $this->context->currency->iso_code,
                 'transaction_id' => pSQL($order['order']['uuid']),
                 'payment_status' => pSQL($order['order']['status']),
@@ -135,7 +140,7 @@ class paylandsPaymentModuleFrontController extends ModuleFrontController
 
             $this->module->validateOrder((int)$cart->id, Configuration::get('PNP_ORDER_WAITING_STATE'), $total, $this->module->name, null, $order_details, (int)$cart->id_currency, false, $customer->secure_key);
             $this->module->createPaylandsOrder($order, $cart->id, $this->module->currentOrder);
-            $redirect_url = $pnpOrder->getRedirectUrl() . $order["order"]["token"] . "?lang=".$lang;
+            $redirect_url = $pnpOrder->getRedirectUrl() . $order["order"]["token"] . "?lang=" . $lang . ($isBizum ? '&apm=BIZUM' : '');
             return Tools::redirect($redirect_url);
         }
 
