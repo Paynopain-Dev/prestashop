@@ -47,21 +47,53 @@ class Logger {
         'shipping_address', 'billing_address',
     );
 
-    private static $logger;
+    /**
+     * Log file path for this request (resolved once).
+     *
+     * @var string|null
+     */
+    private static $file;
+
     public static function log($message)
     {
-        if (empty(self::$logger)) {
-            self::$logger = new \Katzgrau\KLogger\Logger(_PS_MODULE_DIR_.'paylands/logs', Psr\Log\LogLevel::INFO, self::getOptions());
-        }
-        self::$logger->info($message);
+        self::write('info', $message);
     }
 
     public static function error($message)
     {
-        if (empty(self::$logger)) {
-            self::$logger = new \Katzgrau\KLogger\Logger(_PS_MODULE_DIR_.'paylands/logs', Psr\Log\LogLevel::ERROR, self::getOptions());
+        self::write('error', $message);
+    }
+
+    /**
+     * Appends one line in the format the module always used (KLogger's default):
+     * "[2026-11-24 9:05:01.123456] [info] message".
+     *
+     * Written directly instead of through KLogger: KLogger implements psr/log 1.x and
+     * PrestaShop 9 loads psr/log 3.x first, which made every log call a fatal error.
+     * Logging must never break a payment, so failures are silently ignored.
+     *
+     * @param string $level
+     * @param string $message
+     */
+    private static function write($level, $message)
+    {
+        try {
+            if (self::$file === null) {
+                $dir = _PS_MODULE_DIR_ . 'paylands/logs';
+                if (!is_dir($dir)) {
+                    @mkdir($dir, 0755, true);
+                }
+                self::$file = $dir . DIRECTORY_SEPARATOR . self::getFilePrefix() . date('Y-m-d') . '.log';
+            }
+
+            $time = microtime(true);
+            $micro = sprintf('%06d', (int)(($time - floor($time)) * 1000000));
+            $line = '[' . date('Y-m-d G:i:s', (int)$time) . '.' . $micro . '] [' . $level . '] ' . $message . PHP_EOL;
+
+            @file_put_contents(self::$file, $line, FILE_APPEND | LOCK_EX);
+        } catch (Exception $e) {
+            // never let logging interrupt the payment flow
         }
-        self::$logger->error($message);
     }
 
     /**
@@ -102,14 +134,6 @@ class Logger {
         }
 
         return self::REDACTED;
-    }
-
-    private static function getOptions()
-    {
-        return array(
-            'extension' => 'log',
-            'prefix' => self::getFilePrefix(),
-        );
     }
 
     /**

@@ -10,8 +10,7 @@
     }
   ],
   "require": {
-    "php": ">=5.4",
-    "katzgrau/klogger": "dev-master"
+    "php": ">=5.4"
   },
   "config": {
     "preferred-install": "dist",

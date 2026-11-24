@@ -102,9 +102,9 @@ class paylandsLandingkoModuleFrontController extends ModuleFrontController
     {
         $session_customer = $this->context->customer;
         if (Validate::isLoadedObject($session_customer) && empty($session_customer->is_guest) && $session_customer->isLogged()) {
-            return 'index.php?controller=history';
+            return $this->context->link->getPageLink('history', true);
         }
 
-        return 'index.php?controller=guest-tracking';
+        return $this->context->link->getPageLink('guest-tracking', true);
     }
 }

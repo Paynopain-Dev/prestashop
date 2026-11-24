@@ -340,10 +340,15 @@ class Paylands extends \PaymentModule
     {
         $session_customer = $this->context->customer;
 
+        // isLogged(true) validates the session like PrestaShop does (logged flag, password
+        // unchanged since login, session alive) and accepts guest checkouts. Comparing only the
+        // cookie's customer id would keep accepting a session PrestaShop already considers
+        // closed, e.g. a stolen cookie after the customer changed their password.
         return Validate::isLoadedObject($cart)
             && (int)$cart->id_customer > 0
             && Validate::isLoadedObject($session_customer)
-            && (int)$session_customer->id === (int)$cart->id_customer;
+            && (int)$session_customer->id === (int)$cart->id_customer
+            && $session_customer->isLogged(true);
     }
 
     /**

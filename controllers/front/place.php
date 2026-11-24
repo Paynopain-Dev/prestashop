@@ -9,8 +9,9 @@
  */
 class paylandsPlaceModuleFrontController extends ModuleFrontController
 {
-	public function displayAjax()
+	public function postProcess()
 	{
+		header('HTTP/1.1 410 Gone');
 		header('Content-Type: application/json');
 		die(json_encode(array(
 			'success' => false,
@@ -20,6 +21,11 @@ class paylandsPlaceModuleFrontController extends ModuleFrontController
 
 	public function initContent()
 	{
-		$this->displayAjax();
+		$this->postProcess();
+	}
+
+	public function displayAjax()
+	{
+		$this->postProcess();
 	}
 }

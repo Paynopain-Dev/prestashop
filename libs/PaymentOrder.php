@@ -143,7 +143,7 @@ class PaymentOrder
             "amount" => $amount_in_cents,
             "operative" => $operative,
             "signature" => $this->signature,
-            "customer_ext_id" => $customer_ext_id,
+            "customer_ext_id" => (string)$customer_ext_id, // the API rejects non-string values
             "description" => $description,
             "service" => $this->service,
             "secure" => $secure,
@@ -333,9 +333,33 @@ class PaymentOrder
     {
         $env = $this->getEnvironment();
         if ($env == 'sandbox') {
-            return self::$API_URL  . self::$SANDBOX . $endpoint;
+            return self::getApiBaseUrl() . self::$SANDBOX . $endpoint;
         }
 
-        return self::$API_URL . $endpoint;
+        return self::getApiBaseUrl() . $endpoint;
+    }
+
+    /**
+     * Paylands API base URL. Defaults to the public API.
+     *
+     * PNP_API_URL is a development-only override (e.g. a local Paylands environment). It is
+     * deliberately NOT exposed in the admin form, so it cannot be used from the back office
+     * to divert payments; set it via SQL or CLI. Empty or invalid values are ignored.
+     *
+     * @return string
+     */
+    public static function getApiBaseUrl()
+    {
+        if (class_exists('\Configuration')) {
+            $custom = trim((string)\Configuration::get('PNP_API_URL'));
+            if ($custom !== ''
+                && filter_var($custom, FILTER_VALIDATE_URL)
+                && preg_match('#^https?://#i', $custom)
+            ) {
+                return rtrim($custom, '/');
+            }
+        }
+
+        return self::$API_URL;
     }
 }

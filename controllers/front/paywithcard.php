@@ -140,6 +140,8 @@ class paylandsPaywithcardModuleFrontController extends ModuleFrontController
 
     public function displayAjax()
     {
-        $this->ajaxDie(Tools::jsonEncode($this->ajaxResponse));
+        // ajaxDie() and Tools::jsonEncode() no longer exist in PrestaShop 9.
+        header('Content-Type: application/json');
+        die(json_encode($this->ajaxResponse));
     }
 }
