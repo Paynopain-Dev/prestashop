@@ -116,11 +116,11 @@ class paylandsPaymentModuleFrontController extends ModuleFrontController
 
             if (empty($order) || $order['code'] != 200) {
                 $this->module->validateOrder((int)$cart->id, Configuration::get('PS_OS_ERROR'), $total, $this->module->name, null, array(), (int)$cart->id_currency, false, $customer->secure_key);
-                \Logger::error("cartId:" .$cart->id. "#PaylandsOrder:" . json_encode($order, JSON_PRETTY_PRINT));
+                \Logger::error("cartId:" .$cart->id. "#PaylandsOrder:" . json_encode(\Logger::redact($order), JSON_PRETTY_PRINT));
                 return Tools::redirect(Context::getContext()->link->getModuleLink('paylands', 'ko', array('id' => $cart->id), true));
             }
 
-            \Logger::log("cartId:" .$cart->id. "#PaylandsOrder:" . json_encode($order, JSON_PRETTY_PRINT));
+            \Logger::log("cartId:" .$cart->id. "#PaylandsOrder:" . json_encode(\Logger::redact($order), JSON_PRETTY_PRINT));
 
             $order_details = array(
                 'method' => $this->module->name,

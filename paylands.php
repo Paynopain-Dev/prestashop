@@ -330,6 +330,50 @@ class Paylands extends \PaymentModule
         ));
     }
 
+    /**
+     * True when the cart belongs to the customer of the current session (registered or guest).
+     *
+     * @param Cart $cart
+     * @return bool
+     */
+    public function isCartOwnedByCurrentCustomer($cart)
+    {
+        $session_customer = $this->context->customer;
+
+        // isLogged(true) validates the session like PrestaShop does (logged flag, password
+        // unchanged since login, session alive) and accepts guest checkouts. Comparing only the
+        // cookie's customer id would keep accepting a session PrestaShop already considers
+        // closed, e.g. a stolen cookie after the customer changed their password.
+        return Validate::isLoadedObject($cart)
+            && (int)$cart->id_customer > 0
+            && Validate::isLoadedObject($session_customer)
+            && (int)$session_customer->id === (int)$cart->id_customer
+            && $session_customer->isLogged(true);
+    }
+
+    /**
+     * Returns the saved card with this uuid only if it belongs to the given customer.
+     *
+     * @param string $card_uuid
+     * @param int $id_customer
+     * @return array|null
+     */
+    public function getCustomerCard($card_uuid, $id_customer)
+    {
+        if (!is_string($card_uuid) || $card_uuid === '' || (int)$id_customer <= 0) {
+            return null;
+        }
+
+        $sql = new DbQuery();
+        $sql->select('card_uuid')
+            ->from('pnp_paylands_cards')
+            ->where('card_uuid = "' . pSQL($card_uuid) . '"')
+            ->where('customer_id = ' . (int)$id_customer);
+        $card = Db::getInstance()->getRow($sql);
+
+        return empty($card['card_uuid']) ? null : $card;
+    }
+
     public function getContent()
     {
         $this->_html = '';

@@ -1,20 +1,32 @@
 <?php
 
-include_once(_PS_MODULE_DIR_ . 'paylands/classes/paylands.php');
-
+/**
+ * Legacy endpoint (PaylandsConector flow), no longer used by the module.
+ *
+ * It created a Paylands payment order on every unauthenticated request and sent a card uuid
+ * taken from $_GET without checking its owner.
+ * The file is kept (instead of deleted) so that upgrading the module over an existing
+ * installation overwrites the old code: a deleted file would stay on disk.
+ */
 class paylandsInitializeModuleFrontController extends ModuleFrontController
 {
-	/**
-	 * Execute Ajax Request
-	 */
+	public function postProcess()
+	{
+		header('HTTP/1.1 410 Gone');
+		header('Content-Type: application/json');
+		die(json_encode(array(
+			'success' => false,
+			'data' => array('message' => 'This endpoint is no longer available.'),
+		)));
+	}
+
+	public function initContent()
+	{
+		$this->postProcess();
+	}
+
 	public function displayAjax()
 	{
-		$uuid = $_GET['uuid'];
-		$cart = Context::getContext()->cart;
-		$paylandsModel = new PaylandsConector();
-		$response = $paylandsModel->getPayment($uuid, $cart);
-		$this->module->saveCartPaylandsId($cart->id,$response->order->uuid);
-		$tokenResponse = $response->order->token;
-		die(json_encode(array('url' => $paylandsModel->getRedirectUrl('payment/tokenized/' . $tokenResponse))));
+		$this->postProcess();
 	}
 }

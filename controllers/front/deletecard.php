@@ -36,18 +36,31 @@ class paylandsDeletecardModuleFrontController extends ModuleFrontController
 
     public function postProcess()
     {
-        $deleted = Db::getInstance()->delete('pnp_paylands_cards', '`card_uuid` = ' . (int)Tools::getValue('card_uuid'));
-        $result = array();
-        $result['success'] = true;
+        $result = array('success' => false);
 
-        if (empty($deleted)) {
-            $result['success'] = false;
+        // A customer may only delete their own saved cards. card_uuid is a string uuid:
+        // the old (int) cast turned it into 0, which in MySQL matches every uuid that does
+        // not start with a digit, deleting the cards of many customers at once.
+        $customer = $this->context->customer;
+        $card_uuid = Tools::getValue('card_uuid');
+
+        if (Validate::isLoadedObject($customer) && $customer->isLogged()
+            && is_string($card_uuid) && $card_uuid !== ''
+        ) {
+            $deleted = Db::getInstance()->delete(
+                'pnp_paylands_cards',
+                '`card_uuid` = "' . pSQL($card_uuid) . '" AND `customer_id` = ' . (int)$customer->id
+            );
+            $result['success'] = $deleted && Db::getInstance()->Affected_Rows() > 0;
         }
+
         $this->ajaxResponse = $result;
     }
 
     public function displayAjax()
     {
-        $this->ajaxDie(Tools::jsonEncode($this->ajaxResponse));
+        // ajaxDie() and Tools::jsonEncode() no longer exist in PrestaShop 9.
+        header('Content-Type: application/json');
+        die(json_encode($this->ajaxResponse));
     }
 }

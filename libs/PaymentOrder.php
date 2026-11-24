@@ -40,6 +40,7 @@ class PaymentOrder
 
     const CREATE_ORDER_ENDPOINT = '/payment';
     const DIRECT_PAYMENT_ENDPOINT = '/payment/direct';
+    const ORDER_ENDPOINT = '/order/';
 
     /**
      * PNP User Api key - obtained from User PNP account
@@ -142,7 +143,7 @@ class PaymentOrder
             "amount" => $amount_in_cents,
             "operative" => $operative,
             "signature" => $this->signature,
-            "customer_ext_id" => $customer_ext_id,
+            "customer_ext_id" => (string)$customer_ext_id, // the API rejects non-string values
             "description" => $description,
             "service" => $this->service,
             "secure" => $secure,
@@ -186,6 +187,100 @@ class PaymentOrder
     }
 
     /**
+     * Reads an order from Paylands (GET /order/{uuid}).
+     *
+     * @param string $order_uuid
+     * @return array|null
+     */
+    public function getOrder($order_uuid)
+    {
+        $url = $this->getURL(self::ORDER_ENDPOINT . rawurlencode($order_uuid));
+        return $this->request($url, null);
+    }
+
+    /**
+     * Checks the validation_hash of a url_post notification sent by Paylands.
+     *
+     * Paylands computes sha256(json_encode({order, client[, extra_data]}) . signature)
+     * with JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES. The body is decoded as
+     * objects (not associative arrays) so empty objects/arrays re-encode unchanged.
+     *
+     * @param string $raw_body Raw notification body
+     * @param string $signature Merchant signature
+     * @return bool
+     */
+    public static function isValidNotification($raw_body, $signature)
+    {
+        if (empty($raw_body) || empty($signature)) {
+            return false;
+        }
+
+        $notification = json_decode($raw_body);
+        if (!is_object($notification)
+            || empty($notification->validation_hash)
+            || !is_string($notification->validation_hash)
+            || !property_exists($notification, 'order')
+            || !property_exists($notification, 'client')
+        ) {
+            return false;
+        }
+
+        $hashed = array(
+            'order' => $notification->order,
+            'client' => $notification->client,
+        );
+        if (property_exists($notification, 'extra_data')) {
+            $hashed['extra_data'] = $notification->extra_data;
+        }
+
+        $data = json_encode($hashed, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
+        if ($data === false) {
+            return false;
+        }
+
+        $expected = hash('sha256', $data . $signature);
+
+        return self::hashEquals($expected, strtolower($notification->validation_hash));
+    }
+
+    /**
+     * Constant-time string comparison (hash_equals is not available before PHP 5.6).
+     *
+     * @param string $known
+     * @param string $user
+     * @return bool
+     */
+    private static function hashEquals($known, $user)
+    {
+        if (function_exists('hash_equals')) {
+            return hash_equals($known, $user);
+        }
+
+        return self::compareStrings($known, $user);
+    }
+
+    /**
+     * Constant-time fallback used on PHP 5.4/5.5 only.
+     *
+     * @param string $known
+     * @param string $user
+     * @return bool
+     */
+    private static function compareStrings($known, $user)
+    {
+        if (strlen($known) !== strlen($user)) {
+            return false;
+        }
+
+        $result = 0;
+        for ($i = 0, $len = strlen($known); $i < $len; $i++) {
+            $result |= ord($known[$i]) ^ ord($user[$i]);
+        }
+
+        return $result === 0;
+    }
+
+    /**
      * @param float $number
      * @return float
      */
@@ -196,9 +291,18 @@ class PaymentOrder
 
     private function post($url, $params)
     {
-        \Logger::log("PaylandsRequest:" . json_encode($params, JSON_PRETTY_PRINT));
+        \Logger::log("PaylandsRequest:" . json_encode(\Logger::redact($params), JSON_PRETTY_PRINT));
 
-        $payload_json = json_encode($params);
+        return $this->request($url, json_encode($params));
+    }
+
+    /**
+     * @param string $url
+     * @param string|null $payload_json JSON body for POST, null for GET
+     * @return array|null
+     */
+    private function request($url, $payload_json)
+    {
         $token = $this->getApiKey();
 
         $ch = curl_init();
@@ -206,8 +310,10 @@ class PaymentOrder
         curl_setopt($ch, CURLOPT_URL, $url);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
         curl_setopt($ch, CURLOPT_HEADER, false);
-        curl_setopt($ch, CURLOPT_POST, true);
-        curl_setopt($ch, CURLOPT_POSTFIELDS, $payload_json);
+        if ($payload_json !== null) {
+            curl_setopt($ch, CURLOPT_POST, true);
+            curl_setopt($ch, CURLOPT_POSTFIELDS, $payload_json);
+        }
         curl_setopt(
             $ch,
             CURLOPT_HTTPHEADER,
@@ -227,9 +333,33 @@ class PaymentOrder
     {
         $env = $this->getEnvironment();
         if ($env == 'sandbox') {
-            return self::$API_URL  . self::$SANDBOX . $endpoint;
+            return self::getApiBaseUrl() . self::$SANDBOX . $endpoint;
         }
 
-        return self::$API_URL . $endpoint;
+        return self::getApiBaseUrl() . $endpoint;
+    }
+
+    /**
+     * Paylands API base URL. Defaults to the public API.
+     *
+     * PNP_API_URL is a development-only override (e.g. a local Paylands environment). It is
+     * deliberately NOT exposed in the admin form, so it cannot be used from the back office
+     * to divert payments; set it via SQL or CLI. Empty or invalid values are ignored.
+     *
+     * @return string
+     */
+    public static function getApiBaseUrl()
+    {
+        if (class_exists('\Configuration')) {
+            $custom = trim((string)\Configuration::get('PNP_API_URL'));
+            if ($custom !== ''
+                && filter_var($custom, FILTER_VALIDATE_URL)
+                && preg_match('#^https?://#i', $custom)
+            ) {
+                return rtrim($custom, '/');
+            }
+        }
+
+        return self::$API_URL;
     }
 }

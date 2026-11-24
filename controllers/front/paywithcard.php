@@ -45,12 +45,22 @@ class paylandsPaywithcardModuleFrontController extends ModuleFrontController
             Tools::redirect('index.php?controller=order');
         }
 
+        // Only the owner of the cart may pay it, and only with one of their own saved cards.
+        if (!$this->module->isCartOwnedByCurrentCustomer($cart)) {
+            \Logger::error("PNP_PAY_WITH_CARD#CartId:" . (int)$cart->id . "#Rejected: cart does not belong to the current customer");
+            $this->ajaxResponse = array('redirect' => 'index.php?controller=order');
+            return;
+        }
+
         $customer = new Customer($cart->id_customer);
-        $sql = new DbQuery();
-        $sql->select('card_uuid')
-            ->from('pnp_paylands_cards')
-            ->where('card_uuid = "' . pSQL(Tools::getValue('card_uuid')) . '"');
-        $user_card = \Db::getInstance()->getRow($sql);
+        $user_card = $this->module->getCustomerCard(Tools::getValue('card_uuid'), $cart->id_customer);
+        if (empty($user_card)) {
+            \Logger::error("PNP_PAY_WITH_CARD#CartId:" . (int)$cart->id . "#Rejected: card does not belong to the cart customer");
+            $this->ajaxResponse = array(
+                'redirect' => Context::getContext()->link->getModuleLink('paylands', 'payment', array(), true),
+            );
+            return;
+        }
 
         $secure_payment = (int)Configuration::get('PNP_SECURE');
         $env = (int)Configuration::get('PNP_ENVIRONMENT');
@@ -80,7 +90,7 @@ class paylandsPaywithcardModuleFrontController extends ModuleFrontController
         $url_redirect = Context::getContext()->link->getModuleLink('paylands', 'landingko', array('id' => $cart->id), true);
 
         if (!empty($order) && $order['code'] == 200) {
-            \Logger::log("cartId:" . $cart->id . "#PaylandsOrder:" . json_encode($order, JSON_PRETTY_PRINT));
+            \Logger::log("cartId:" . $cart->id . "#PaylandsOrder:" . json_encode(\Logger::redact($order), JSON_PRETTY_PRINT));
 
             $order_details = array(
                 'method' => $this->module->name,
@@ -111,15 +121,15 @@ class paylandsPaywithcardModuleFrontController extends ModuleFrontController
 
                 if (!empty($directPayment) && $directPayment['order']['status'] == 'SUCCESS') {
                     $url_redirect = Context::getContext()->link->getModuleLink('paylands', 'landingok', array('id' => $cart->id), true);
-                    \Logger::log("PNP_DIRECT_PAYMENT:cartId:" . $cart->id . "#PaylandsOrder:" . json_encode($directPayment, JSON_PRETTY_PRINT));
+                    \Logger::log("PNP_DIRECT_PAYMENT:cartId:" . $cart->id . "#PaylandsOrder:" . json_encode(\Logger::redact($directPayment), JSON_PRETTY_PRINT));
                 } else {
                     $order_ps->setCurrentState(Configuration::get('PS_OS_ERROR'));
-                    \Logger::error("PNP_DIRECT_PAYMENT:cartId:" . $cart->id . "#PaylandsOrder:" . json_encode($directPayment, JSON_PRETTY_PRINT));
+                    \Logger::error("PNP_DIRECT_PAYMENT:cartId:" . $cart->id . "#PaylandsOrder:" . json_encode(\Logger::redact($directPayment), JSON_PRETTY_PRINT));
                 }
             }
         } else {
             $this->module->validateOrder((int)$cart->id, Configuration::get('PS_OS_ERROR'), $total, $this->module->name, null, array(), (int)$cart->id_currency, false, $customer->secure_key);
-            \Logger::error("cartId:" . $cart->id . "#PaylandsOrder:" . json_encode($order, JSON_PRETTY_PRINT));
+            \Logger::error("cartId:" . $cart->id . "#PaylandsOrder:" . json_encode(\Logger::redact($order), JSON_PRETTY_PRINT));
         }
 
         $response = array();
@@ -130,6 +140,8 @@ class paylandsPaywithcardModuleFrontController extends ModuleFrontController
 
     public function displayAjax()
     {
-        $this->ajaxDie(Tools::jsonEncode($this->ajaxResponse));
+        // ajaxDie() and Tools::jsonEncode() no longer exist in PrestaShop 9.
+        header('Content-Type: application/json');
+        die(json_encode($this->ajaxResponse));
     }
 }
