@@ -1,0 +1,73 @@
+{
+	"message": "OK",
+	"code": 200,
+	"current_time": "2023-04-05T17:39:56+0200",
+	"order": {
+		"uuid": "E89DFBF6-23D3-4D78-BC98-06936F38D85F",
+		"created": "2022-12-30T12:21:32+0100",
+		"created_from_client_timezone": "2022-12-30T12:21:32+0100",
+		"amount": 10,
+		"currency": "978",
+		"paid": true,
+		"status": "SUCCESS",
+		"safe": false,
+		"refunded": 0,
+		"additional": null,
+		"service": "CREDORAX",
+		"service_uuid": "E6C5D97A-BDE8-45E0-904C-60EDEFDEC16D",
+		"customer": "test2222",
+		"cof_txnid": null,
+		"transactions": [
+			{
+				"uuid": "7DD3AE71-A758-416C-B813-D3EE936500F3",
+				"created": "2022-12-30T12:21:32+0100",
+				"created_from_client_timezone": "2022-12-30T12:21:32+0100",
+				"operative": "AUTHORIZATION",
+				"amount": 10,
+				"authorization": "202046",
+				"processor_id": "XZZ01f0a9404ffbb7B95LCGT274ERFW7",
+				"status": "SUCCESS",
+				"error": "NONE",
+				"source": {
+					"object": "CARD",
+					"uuid": "80C55ED9-3D72-4636-8AC7-27898AAD36B3",
+					"type": "CREDIT",
+					"token": "d3879e8cf246d2a9fbd0db46e013329a4772127a8634ea9b5fcb86ec1b9b29c888d60912fc96ff8320673d0570620967c959cb6d6671ce9145315a8b664c7ea4",
+					"brand": "VISA",
+					"country": "MT",
+					"holder": "Miguel C",
+					"bin": 401881,
+					"last4": "0011",
+					"is_saved": false,
+					"expire_month": "12",
+					"expire_year": "34",
+					"additional": null,
+					"bank": "Bank of Valletta p.l.c",
+					"prepaid": null,
+					"validation_date": "2022-12-30 12:22:18",
+					"creation_date": "2022-12-30 12:21:58",
+					"brand_description": "Visa Classic",
+					"origin": "KEYENTRY",
+					"cof": {
+						"is_available": false
+					}
+				},
+				"antifraud": null,
+				"device": {
+					"fingerprint": "2032183838",
+					"user_agent": "Mozilla\/5.0 (X11; Linux x86_64; rv:108.0) Gecko\/20100101 Firefox\/108.0"
+				},
+				"error_details": null
+			}
+		],
+		"token": null,
+		"ip": "127.0.0.1",
+		"reference": null,
+		"dynamic_descriptor": null,
+		"threeds_data": null
+	},
+	"client": {
+		"uuid": "42B8CF56-A7D7-4D4A-8349-4E27263CB2D5"
+	},
+	"validation_hash": "eae6e4c9d3dcb27067041aac25e15044909bc5a96830387332c62885cb6324b8"
+}

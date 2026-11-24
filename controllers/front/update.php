@@ -1,41 +1,31 @@
 <?php
 
-include_once(_PS_MODULE_DIR_ . 'paylands/classes/paylands.php');
-
+/**
+ * Legacy endpoint (PaylandsConector flow), no longer used by the module.
+ *
+ * Old url_post receiver: it accepted unsigned notifications and set orders as paid.
+ * The file is kept (instead of deleted) so that upgrading the module over an existing
+ * installation overwrites the old code: a deleted file would stay on disk.
+ */
 class paylandsUpdateModuleFrontController extends ModuleFrontController
 {
-	public $ssl = true;
-
-	/**
-	 * @see FrontController::initContent()
-	 */
-	public function initContent()
-	{
-		parent::initContent();
-
-		Tools::redirect('index.php?controller=order');
-	}
-
 	public function postProcess()
 	{
-		$json = file_get_contents('php://input');
-		$data = json_decode($json);
-		$order = $data->order;
-		if ($order && $order->status == 'SUCCESS') {
-			$paylandsId = $order->uuid;
-			$cartId = $this->module->getCartByPaylandsId($paylandsId);
-			$cart = new Cart($cartId);
-			if ($cart->id) {
-				$orderId = Order::getIdByCartId((int)($cart->id));
-				$orderTemp=new Order($orderId);
-				$history = new OrderHistory();
-				$history->id_order = (int)$orderId;
-				$history->changeIdOrderState(2, (int)($orderTemp->id));
-				$history->save();
-				return true;
-			}
-		}
-		return false;
+		header('HTTP/1.1 410 Gone');
+		header('Content-Type: application/json');
+		die(json_encode(array(
+			'success' => false,
+			'data' => array('message' => 'This endpoint is no longer available.'),
+		)));
 	}
 
+	public function initContent()
+	{
+		$this->postProcess();
+	}
+
+	public function displayAjax()
+	{
+		$this->postProcess();
+	}
 }

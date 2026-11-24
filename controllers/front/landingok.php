@@ -59,6 +59,14 @@ class paylandsLandingokModuleFrontController extends ModuleFrontController
             $face_color = '#ef0643';
         }
 
+        // The order-confirmation link carries the customer's secure_key, which grants access to
+        // the customer's orders and to the guest-to-customer conversion form. Only the owner of
+        // the cart (current session) may receive it.
+        if ($success && !$this->module->isCartOwnedByCurrentCustomer($cart)) {
+            $success = false;
+            $url_redirect = $this->getNotOwnerRedirect();
+        }
+
         if ($success) {
             $order_id = 0;
             if (_PS_VERSION_ >= 1.7) {
@@ -82,5 +90,21 @@ class paylandsLandingokModuleFrontController extends ModuleFrontController
         } else {
             die($this->context->smarty->fetch(_PS_MODULE_DIR_.$this->module->name . '/views/templates/front/ok.tpl'));
         }
+    }
+
+    /**
+     * Where to send a visitor that is not the owner of the cart (e.g. came back from Paylands
+     * in another browser or with an expired session). Uses only the visitor's own session data.
+     *
+     * @return string
+     */
+    private function getNotOwnerRedirect()
+    {
+        $session_customer = $this->context->customer;
+        if (Validate::isLoadedObject($session_customer) && empty($session_customer->is_guest) && $session_customer->isLogged()) {
+            return 'index.php?controller=history';
+        }
+
+        return 'index.php?controller=guest-tracking';
     }
 }

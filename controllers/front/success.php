@@ -1,39 +1,31 @@
 <?php
 
-
+/**
+ * Legacy endpoint (PaylandsConector flow), no longer used by the module.
+ *
+ * Old url_ok landing: it created orders from the session cart without verifying the payment.
+ * The file is kept (instead of deleted) so that upgrading the module over an existing
+ * installation overwrites the old code: a deleted file would stay on disk.
+ */
 class paylandsSuccessModuleFrontController extends ModuleFrontController
 {
-    public $ssl = true;
+	public function postProcess()
+	{
+		header('HTTP/1.1 410 Gone');
+		header('Content-Type: application/json');
+		die(json_encode(array(
+			'success' => false,
+			'data' => array('message' => 'This endpoint is no longer available.'),
+		)));
+	}
 
-    /**
-     * @see FrontController::postProcess()
-     */
-    public function postProcess()
-    {
-		$cart = Context::getContext()->cart;
-		$paylandsId = $this->module->getCartPaylandsId($cart->id);
-		if (!$paylandsId) {
-			Tools::redirect('index.php?controller=order');
-		}
-		$customer = new Customer($cart->id_customer);
+	public function initContent()
+	{
+		$this->postProcess();
+	}
 
-		$total = $cart->getOrderTotal(true, Cart::BOTH);
-		$order_details = array(
-			'method' => $this->module->name,
-			'currency' => $this->context->currency->iso_code,
-			'transaction_id' => pSQL($paylandsId),
-			'payment_method' => $this->module->name,
-			'date_transaction' => date("Y-m-d H:i:s")
-		);
-
-		$order_ps = '';
-		if (_PS_VERSION_ >= 1.7) {
-			$order_ps = Order::getByCartId($cart->id);
-		} else {
-			$order_id = Order::getOrderByCartId($cart->id);
-			$order_ps = new Order($order_id);
-		}
-		$this->module->validateOrder((int)$cart->id, Configuration::get('PNP_ORDER_WAITING_STATE'), $total, $this->module->name, null, $order_details, (int)$cart->id_currency, false, $customer->secure_key);
-		Tools::redirect('index.php?controller=order-confirmation&id_cart=' . (int) $cart->id . '&id_module=' . (int) $this->module->id . '&id_order=' . $this->module->currentOrder . '&key=' . $customer->secure_key);
-    }
+	public function displayAjax()
+	{
+		$this->postProcess();
+	}
 }

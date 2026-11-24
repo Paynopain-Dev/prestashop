@@ -45,6 +45,13 @@ class paylandsPaywithformModuleFrontController extends ModuleFrontController
             Tools::redirect('index.php?controller=order');
         }
 
+        // Only the owner of the cart may turn it into an order and get its payment form.
+        if (!$this->module->isCartOwnedByCurrentCustomer($cart)) {
+            \Logger::error("PNP_PAY_WITH_FORM#CartId:" . (int)$cart->id . "#Rejected: cart does not belong to the current customer");
+            $this->ajaxResponse = array('redirect' => 'index.php?controller=order');
+            return;
+        }
+
         $customer = new Customer($cart->id_customer);
         $secure_payment = (int)Configuration::get('PNP_SECURE');
         $env = (int)Configuration::get('PNP_ENVIRONMENT');
@@ -73,7 +80,7 @@ class paylandsPaywithformModuleFrontController extends ModuleFrontController
         $url_redirect = Context::getContext()->link->getModuleLink('paylands', 'landingko', array('id' => $cart->id), true);
 
         if (!empty($order) && $order['code'] == 200) {
-            \Logger::log("cartId:" . $cart->id . "#PaylandsOrder:" . json_encode($order, JSON_PRETTY_PRINT));
+            \Logger::log("cartId:" . $cart->id . "#PaylandsOrder:" . json_encode(\Logger::redact($order), JSON_PRETTY_PRINT));
             $url_redirect = $pnpOrder->getRedirectUrl() . $order["order"]["token"] . "?lang=" . $lang;
             $order_details = array(
                 'method' => $this->module->name,
@@ -96,7 +103,7 @@ class paylandsPaywithformModuleFrontController extends ModuleFrontController
             $this->module->createPaylandsOrder($order, $cart->id, $order_id);
         } else {
             $this->module->validateOrder((int)$cart->id, Configuration::get('PS_OS_ERROR'), $total, $this->module->name, null, array(), (int)$cart->id_currency, false, $customer->secure_key);
-            \Logger::error("cartId:" . $cart->id . "#PaylandsOrder:" . json_encode($order, JSON_PRETTY_PRINT));
+            \Logger::error("cartId:" . $cart->id . "#PaylandsOrder:" . json_encode(\Logger::redact($order), JSON_PRETTY_PRINT));
         }
 
         $response = array();
